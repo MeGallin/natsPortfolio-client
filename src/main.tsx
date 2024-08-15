@@ -11,7 +11,9 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Portfolio from './pages/Portfolio';
+import Admin from './pages/Admin';
 import './index.css';
+import { isAuthenticated } from './auth';
 
 // Create the root route
 const rootRoute = new RootRoute({
@@ -43,6 +45,18 @@ const portfolioRoute = new Route({
   component: Portfolio,
 });
 
+const adminRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: 'admin',
+  component: Admin,
+  beforeLoad: () => {
+    // Redirect or return a 403/404 component if the user is not authenticated
+    if (!isAuthenticated()) {
+      return { redirect: '/' };
+    }
+  },
+});
+
 // Create the router instance
 const router = new Router({
   routeTree: rootRoute.addChildren([
@@ -50,6 +64,7 @@ const router = new Router({
     aboutRoute,
     contactRoute,
     portfolioRoute,
+    adminRoute,
   ]),
 });
 
