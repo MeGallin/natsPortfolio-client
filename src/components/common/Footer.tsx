@@ -1,5 +1,11 @@
+import DateTime from './DateTime';
+
 const Footer = () => {
-  return <footer>Footer</footer>;
+  return (
+    <footer>
+      <DateTime />
+    </footer>
+  );
 };
 
 export default Footer;
