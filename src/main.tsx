@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   RouterProvider,
@@ -7,20 +7,23 @@ import {
   Route,
 } from '@tanstack/react-router';
 import App from './App';
-import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Portfolio from './pages/Portfolio';
-import Admin from './pages/Admin';
 import './index.css';
 import { isAuthenticated } from './auth';
+import Spinner from './components/common/Spinner';
+
+// Lazy load the route components
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 // Create the root route
 const rootRoute = new RootRoute({
   component: App,
 });
 
-// Define the individual routes
+// Define the individual routes with lazy-loaded components
 const homeRoute = new Route({
   getParentRoute: () => rootRoute,
   path: '/',
@@ -71,6 +74,8 @@ const router = new Router({
 // Render the application with the RouterProvider
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Suspense fallback={<Spinner />}>
+      <RouterProvider router={router} />
+    </Suspense>
   </StrictMode>,
 );
