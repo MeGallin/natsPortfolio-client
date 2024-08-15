@@ -1,68 +1,109 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* CSS Reset - Modern Version */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* Remove default margin, padding, and box-sizing */
+*,
+*::before,
+*::after {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Set default font size and line height */
+html {
+  font-size: 100%; /* 16px */
+  line-height: 1.5;
 }
 
+/* Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove default list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default text decoration and color inheritance for links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Remove default table borders and spacing */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Ensure media elements fit their container */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Ensure form elements have a consistent appearance */
+button,
+input,
+select,
+textarea {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+/* Remove default appearance for buttons */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: transparent;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Remove default appearance for progress elements */
+progress {
+  vertical-align: baseline;
+}
+
+/* Ensure blockquote and figures have consistent margins */
+blockquote,
+figure {
+  margin: 0;
+}
+
+/* Ensure iframe and embed elements are responsive */
+iframe,
+embed {
+  max-width: 100%;
+}
+
+/* Remove default appearance for fieldset and legend */
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+legend {
+  display: table;
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* Remove default appearance for details and summary */
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
 }
