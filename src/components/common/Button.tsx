@@ -16,6 +16,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const buttonStyle = {
     backgroundColor: color,
+    width: '100%',
     color: 'white',
     padding: '10px 20px',
     border: 'none',
