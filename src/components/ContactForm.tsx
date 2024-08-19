@@ -3,15 +3,17 @@ import Input from './common/Input';
 import Button from './common/Button';
 
 const ContactForm: React.FC = () => {
-  const [fullName, setFullName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({
-    fullName: '',
+    name: '',
     email: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const validateFullName = (name: string): string => {
     const parts = name.trim().split(' ');
@@ -36,16 +38,16 @@ const ContactForm: React.FC = () => {
     return '';
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const fullNameError = validateFullName(fullName);
+    const nameError = validateFullName(name);
     const emailError = validateEmail(email);
     const messageError = validateMessage(message);
 
-    if (fullNameError || emailError || messageError) {
+    if (nameError || emailError || messageError) {
       setErrors({
-        fullName: fullNameError,
+        name: nameError,
         email: emailError,
         message: messageError,
       });
@@ -53,35 +55,58 @@ const ContactForm: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
 
-    // Mock submission logic
-    setTimeout(() => {
-      alert(
-        `Form submitted!\n\nFull Name: ${fullName}\nEmail: ${email}\nMessage: ${message}`,
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_END_POINT}api/contact-form`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, message }),
+        },
       );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSuccessMessage(data.data);
+        // Reset form fields
+        setName('');
+        setEmail('');
+        setMessage('');
+        setErrors({ name: '', email: '', message: '' });
+      } else {
+        throw new Error('Failed to send message.');
+      }
+    } catch (error) {
+      setErrorMessage(
+        'There was an error submitting the form. Please try again later.',
+      );
+    } finally {
       setIsSubmitting(false);
-      // Reset form fields
-      setFullName('');
-      setEmail('');
-      setMessage('');
-      setErrors({ fullName: '', email: '', message: '' });
-    }, 1000);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} style={formStyle}>
       <fieldset style={fieldsetStyle}>
-        <legend style={legendStyle}>CONTACT INFORMATION</legend>
+        <legend style={legendStyle}>Contact Information</legend>
+
+        {successMessage && <p style={successMessageStyle}>{successMessage}</p>}
+        {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
 
         <div style={fieldStyle}>
           <Input
             type="text"
             placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             style={inputStyle} // Applied full-width style
           />
-          {errors.fullName && <span style={errorStyle}>{errors.fullName}</span>}
+          {errors.name && <span style={errorStyle}>{errors.name}</span>}
         </div>
 
         <div style={fieldStyle}>
@@ -110,7 +135,8 @@ const ContactForm: React.FC = () => {
           color={getComputedStyle(document.documentElement)
             .getPropertyValue('--primary-color')
             .trim()}
-          disabled={isSubmitting || !fullName || !email || !message}
+          disabled={isSubmitting || !name || !email || !message}
+          style={buttonStyle} // Applied full-width style
         />
       </fieldset>
     </form>
@@ -164,9 +190,26 @@ const textareaStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
+const buttonStyle: React.CSSProperties = {
+  width: '100%', // Full width for the button
+  boxSizing: 'border-box',
+};
+
 const errorStyle: React.CSSProperties = {
   color: 'red',
   fontSize: '12px',
   marginTop: '-10px',
+  marginBottom: '10px',
+};
+
+const successMessageStyle: React.CSSProperties = {
+  color: 'green',
+  fontSize: '14px',
+  marginBottom: '10px',
+};
+
+const errorMessageStyle: React.CSSProperties = {
+  color: 'red',
+  fontSize: '14px',
   marginBottom: '10px',
 };
