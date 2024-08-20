@@ -69,6 +69,10 @@ const Login: React.FC = () => {
       if (response.ok && result.success) {
         dispatch(login({ user: result.name, token: result.token }));
         localStorage.setItem('authToken', result.token);
+
+        // Trigger custom event to notify of authentication change
+        window.dispatchEvent(new Event('authChange'));
+
         setSuccessMessage(
           `Welcome, ${result.name}! You will be redirected in ${countdown} seconds.`,
         );
