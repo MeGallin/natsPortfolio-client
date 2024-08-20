@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../state/authSlice';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -12,10 +13,12 @@ const Login: React.FC = () => {
     password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(5);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const validateEmail = (email: string): string => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,21 +68,43 @@ const Login: React.FC = () => {
 
       if (response.ok && result.success) {
         dispatch(login({ user: result.name, token: result.token }));
-        setSuccessMessage(`Welcome, ${result.name}!`);
-        // Optionally redirect or perform other actions here
+        localStorage.setItem('authToken', result.token);
+        setSuccessMessage(
+          `Welcome, ${result.name}! You will be redirected in ${countdown} seconds.`,
+        );
+
+        // Trigger countdown and redirect inside useEffect to prevent setState during render
+        setIsSubmitting(false);
+        setCountdown(5);
       } else {
         setErrorMessage(
           'Login failed. Please check your credentials and try again.',
         );
+        setIsSubmitting(false);
       }
     } catch (error) {
       setErrorMessage(
         'An error occurred while trying to log in. Please try again later.',
       );
-    } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown === 1) {
+            clearInterval(timer);
+            navigate('/dashboard');
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer); // Cleanup the interval on component unmount
+    }
+  }, [successMessage, navigate]);
 
   return (
     <form onSubmit={handleSubmit} style={formStyle}>
@@ -95,7 +120,7 @@ const Login: React.FC = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle} // Applied full-width style
+            style={inputStyle}
           />
           {errors.email && <span style={errorStyle}>{errors.email}</span>}
         </div>
@@ -106,7 +131,7 @@ const Login: React.FC = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle} // Applied full-width style
+            style={inputStyle}
           />
           {errors.password && <span style={errorStyle}>{errors.password}</span>}
         </div>
@@ -115,7 +140,7 @@ const Login: React.FC = () => {
           text="Login"
           color={import.meta.env.VITE_PRIMARY_COLOR}
           disabled={isSubmitting || !email || !password}
-          style={buttonStyle} // Applied full-width style
+          style={buttonStyle}
         />
       </fieldset>
     </form>
@@ -137,9 +162,9 @@ const formStyle: React.CSSProperties = {
 
 const fieldsetStyle: React.CSSProperties = {
   border: '1px solid #ccc',
-  borderRadius: '6px', // Subtle border-radius
+  borderRadius: '6px',
   padding: '15px',
-  backgroundColor: '#f9f9f9', // Light background color
+  backgroundColor: '#f9f9f9',
 };
 
 const legendStyle: React.CSSProperties = {
@@ -153,12 +178,12 @@ const fieldStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', // Full width for the input
+  width: '100%',
   boxSizing: 'border-box',
 };
 
 const buttonStyle: React.CSSProperties = {
-  width: '100%', // Full width for the button
+  width: '100%',
   boxSizing: 'border-box',
 };
 
@@ -172,7 +197,6 @@ const errorStyle: React.CSSProperties = {
 const successMessageStyle: React.CSSProperties = {
   color: 'green',
   fontSize: '14px',
-  marginBottom: '10px',
 };
 
 const errorMessageStyle: React.CSSProperties = {

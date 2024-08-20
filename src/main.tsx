@@ -1,13 +1,14 @@
 import { StrictMode, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import {
   RouterProvider,
   Router,
   RootRoute,
   Route,
 } from '@tanstack/react-router';
-import { Provider } from 'react-redux'; // Import the Redux Provider
-import { store } from './state/store'; // Import the Redux store
+import { Provider } from 'react-redux';
+import { store } from './state/store';
 import App from './App';
 import './index.css';
 import { isAuthenticated } from './auth';
@@ -19,6 +20,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
 const Admin = lazy(() => import('./pages/Admin'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Create the root route
 const rootRoute = new RootRoute({
@@ -54,10 +56,17 @@ const adminRoute = new Route({
   getParentRoute: () => rootRoute,
   path: 'admin',
   component: Admin,
+});
+
+// Protected Dashboard Route
+const dashboardRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: 'dashboard',
+  component: Dashboard,
   beforeLoad: () => {
-    // Redirect or return a 403/404 component if the user is not authenticated
-    if (!isAuthenticated()) {
-      return { redirect: '/' };
+    const authenticated = isAuthenticated();
+    if (!authenticated) {
+      return { redirect: '/admin' };
     }
   },
 });
@@ -70,6 +79,7 @@ const router = new Router({
     contactRoute,
     portfolioRoute,
     adminRoute,
+    dashboardRoute,
   ]),
 });
 
@@ -77,9 +87,11 @@ const router = new Router({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <Suspense fallback={<Spinner />}>
-        <RouterProvider router={router} />
-      </Suspense>
+      <BrowserRouter>
+        <Suspense fallback={<Spinner />}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </BrowserRouter>
     </Provider>
   </StrictMode>,
 );
