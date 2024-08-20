@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../../state/authSlice';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 
@@ -10,8 +12,10 @@ const Login: React.FC = () => {
     password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const dispatch = useDispatch();
 
   const validateEmail = (email: string): string => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,7 +47,6 @@ const Login: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    setSuccessMessage(null);
     setErrorMessage(null);
 
     try {
@@ -61,9 +64,9 @@ const Login: React.FC = () => {
       const result = await response.json();
 
       if (response.ok && result.success) {
+        dispatch(login({ user: result.name, token: result.token }));
         setSuccessMessage(`Welcome, ${result.name}!`);
-        // Optionally, you can store the token in localStorage or state
-        localStorage.setItem('token', result.token);
+        // Optionally redirect or perform other actions here
       } else {
         setErrorMessage(
           'Login failed. Please check your credentials and try again.',
@@ -81,7 +84,7 @@ const Login: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} style={formStyle}>
       <fieldset style={fieldsetStyle}>
-        <legend style={legendStyle}>Admin Login</legend>
+        <legend style={legendStyle}>Login</legend>
 
         {successMessage && <p style={successMessageStyle}>{successMessage}</p>}
         {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
