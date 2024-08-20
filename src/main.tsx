@@ -6,6 +6,8 @@ import {
   RootRoute,
   Route,
 } from '@tanstack/react-router';
+import { Provider } from 'react-redux'; // Import the Redux Provider
+import { store } from './state/store'; // Import the Redux store
 import App from './App';
 import './index.css';
 import { isAuthenticated } from './auth';
@@ -71,11 +73,13 @@ const router = new Router({
   ]),
 });
 
-// Render the application with the RouterProvider
+// Render the application with the Redux Provider and RouterProvider
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Suspense fallback={<Spinner />}>
-      <RouterProvider router={router} />
-    </Suspense>
+    <Provider store={store}>
+      <Suspense fallback={<Spinner />}>
+        <RouterProvider router={router} />
+      </Suspense>
+    </Provider>
   </StrictMode>,
 );
