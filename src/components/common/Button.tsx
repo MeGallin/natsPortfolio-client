@@ -26,9 +26,12 @@ const Button: React.FC<ButtonProps> = ({
   } as React.CSSProperties;
 
   return (
-    <button style={buttonStyle} onClick={onClick} disabled={disabled}>
-      {text}
-    </button>
+    <div>
+      {' '}
+      <button style={buttonStyle} onClick={onClick} disabled={disabled}>
+        {text}
+      </button>
+    </div>
   );
 };
 

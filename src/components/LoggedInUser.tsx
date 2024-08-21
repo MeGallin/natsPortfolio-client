@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../state/store';
 import { fetchUserDetails } from '../state/userSlice';
 import './LoggedInUser.css';
+import Spinner from './common/Spinner';
 
 const LoggedInUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,10 +28,11 @@ const LoggedInUser = () => {
 
   return (
     <div className="logged-in-user-wrapper">
-      {status === 'loading' && <p>Loading user details...</p>}
+      {status === 'loading' && <Spinner />}
       {status === 'failed' && <p>Error: {error}</p>}
       {status === 'succeeded' && (
         <div>
+          <h3>Your Details</h3>
           <p>
             <strong>Name:</strong> {name}
           </p>
