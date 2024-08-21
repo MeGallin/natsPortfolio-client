@@ -4,6 +4,7 @@ import { RootState, AppDispatch } from '../state/store';
 import { fetchUserDetails } from '../state/userSlice';
 import './LoggedInUser.css';
 import Spinner from './common/Spinner';
+import sample from '../assets/images/sample.jpg';
 
 const LoggedInUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -48,7 +49,7 @@ const LoggedInUser = () => {
           {profileImage && (
             <p>
               <strong>Profile Image:</strong>{' '}
-              <img src={profileImage} alt="Profile" width="100" />
+              <img src={sample} alt="Profile" width="100" />
             </p>
           )}
           <p>

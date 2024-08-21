@@ -91,9 +91,9 @@ const contactsInfoSlice = createSlice({
       )
       .addCase(
         fetchContactsInfo.rejected,
-        (state, action: PayloadAction<string | null>) => {
+        (state, action) => {
           state.status = 'failed';
-          state.error = action.payload;
+          state.error = action.payload as string | null;
         },
       );
   },
