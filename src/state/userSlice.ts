@@ -30,10 +30,11 @@ export const fetchUserDetails = createAsyncThunk(
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch user details');
       }
-      console.log('slice', data.userDetails);
+
       return data.userDetails; // Return the userDetails object
-    } catch (error) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      return rejectWithValue(errorMessage);
     }
   },
 );
