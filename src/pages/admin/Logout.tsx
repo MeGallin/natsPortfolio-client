@@ -42,7 +42,6 @@ const logoutContainerStyle: React.CSSProperties = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '100vh',
   textAlign: 'center',
 };
 

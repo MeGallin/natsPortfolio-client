@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Logout from './admin/Logout';
 import { isAuthenticated } from '../auth'; // Ensure isAuthenticated is imported
 import LoggedInUser from '../components/LoggedInUser';
+import ContactsInformation from '../components/ContactsInformation';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,12 +19,15 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div>
+    <>
       <h1>Dashboard</h1>
-      <LoggedInUser />
 
+      <div className="dashboard-wrapper">
+        <LoggedInUser />
+        <ContactsInformation />
+      </div>
       <Logout />
-    </div>
+    </>
   );
 };
 
