@@ -6,10 +6,12 @@ import './LoggedInUser.css';
 import Spinner from './common/Spinner';
 import sample from '../assets/images/sample.jpg';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import Button from './common/Button';
 import Input from './common/Input';
+//MUI Imports
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 
 const LoggedInUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -75,6 +77,7 @@ const LoggedInUser = () => {
                   <Typography variant="h6" gutterBottom>
                     Edit
                   </Typography>
+
                   <div style={fieldStyle}>
                     <Input
                       type="text"
@@ -114,8 +117,12 @@ const LoggedInUser = () => {
                 </div>
               ) : (
                 <div onClick={handleAvatarClick}>
-                  <h3>{name}</h3>
-                  <p>{email}</p>
+                   <Tooltip title="Click to edit" placement="top">
+                    <div>
+                      <h3>{name}</h3>
+                      <p>{email}</p>
+                    </div>
+                  </Tooltip>
                 </div>
               )}
             </div>
