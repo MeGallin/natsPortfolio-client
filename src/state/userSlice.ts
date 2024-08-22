@@ -44,10 +44,11 @@ export const fetchUserDetails = createAsyncThunk(
 export const updateUserDetails = createAsyncThunk(
   'user/updateUserDetails',
   async (
-    updatedDetails: { name: string; email: string },
+    updatedDetails: { id: string; name: string; email: string },
     { getState, rejectWithValue },
   ) => {
     try {
+      const { id, ...details } = updatedDetails;
       // Get the token from the Redux auth state or localStorage
       const state = getState() as RootState;
       const token = state.auth.token || localStorage.getItem('authToken');
@@ -57,14 +58,14 @@ export const updateUserDetails = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_END_POINT}api/user-up`,
+        `${import.meta.env.VITE_API_END_POINT}api/user-update/${id}`,
         {
           method: 'PATCH',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updatedDetails),
+          body: JSON.stringify(details), // Use the rest of the details
         },
       );
 
@@ -84,6 +85,7 @@ export const updateUserDetails = createAsyncThunk(
 );
 
 interface UserState {
+  id: string | null;
   name: string | null;
   email: string | null;
   isAdmin: boolean;
@@ -98,6 +100,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
+  id: null,
   name: null,
   email: null,
   isAdmin: false,
@@ -117,6 +120,7 @@ const userSlice = createSlice({
   reducers: {
     setUserDetails: (state, action: PayloadAction<UserState>) => {
       // Update the state with user details
+      state.id = action.payload.id;
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.isAdmin = action.payload.isAdmin;
@@ -129,6 +133,7 @@ const userSlice = createSlice({
     },
     clearUserDetails: (state) => {
       // Clear the user details
+      state.id = null;
       state.name = null;
       state.email = null;
       state.isAdmin = false;
@@ -150,6 +155,7 @@ const userSlice = createSlice({
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.status = 'succeeded';
         // Directly assign the fetched user details to the state
+        state.id = action.payload.id;
         state.name = action.payload.name;
         state.email = action.payload.email;
         state.isAdmin = action.payload.isAdmin;
@@ -169,9 +175,14 @@ const userSlice = createSlice({
       })
       .addCase(updateUserDetails.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // Update the state with the updated user details
-        state.name = action.payload.name;
-        state.email = action.payload.email;
+        if (action.payload) {
+          // Update the state with the updated user details
+          state.name = action.payload.name;
+          state.email = action.payload.email;
+         
+        } else {
+          state.error = 'Failed to update user details';
+        }
       })
       .addCase(updateUserDetails.rejected, (state, action) => {
         state.status = 'failed';

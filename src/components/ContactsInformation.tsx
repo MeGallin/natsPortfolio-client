@@ -48,9 +48,7 @@ const ContactsInformation = () => {
                   <Grid item xs={12} sm={6} md={1}>
                     <Typography variant="subtitle1" gutterBottom>
                       <Typography variant="body2" gutterBottom>
-                        <p>
-                          <strong>From:</strong> {contact.name}
-                        </p>
+                        <strong>From:</strong> {contact.name}
                       </Typography>
                     </Typography>
                   </Grid>
@@ -58,9 +56,7 @@ const ContactsInformation = () => {
                   <Grid item xs={12} sm={6} md={2}>
                     <Typography variant="subtitle1" gutterBottom>
                       <Typography variant="body2" gutterBottom>
-                        <p>
-                          <strong>Email:</strong> {contact.email}
-                        </p>
+                        <strong>Email:</strong> {contact.email}
                       </Typography>
                     </Typography>
                   </Grid>
@@ -68,10 +64,7 @@ const ContactsInformation = () => {
                     <div className="bg-colour-white">
                       <Typography variant="subtitle1" gutterBottom>
                         <Typography variant="body1" gutterBottom>
-                          <p>
-                            {' '}
-                            <strong>Message:</strong> {contact.message}
-                          </p>
+                          <strong>Message:</strong> {contact.message}
                         </Typography>
                       </Typography>
                     </div>
@@ -80,12 +73,10 @@ const ContactsInformation = () => {
                   <Grid item xs={12} sm={6} md={2}>
                     <Typography variant="subtitle1" gutterBottom>
                       <Typography variant="body2" gutterBottom>
-                        <p>
-                          <strong>Received:</strong>
-                          {moment(contact.createdAt).format(
-                            'Do MMMM YYYY, h:mm a',
-                          )}
-                        </p>
+                        <strong>Received:</strong>
+                        {moment(contact.createdAt).format(
+                          'Do MMMM YYYY, h:mm a',
+                        )}
                       </Typography>
                     </Typography>
                   </Grid>
