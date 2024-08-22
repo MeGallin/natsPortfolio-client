@@ -8,9 +8,11 @@ import sample from '../assets/images/sample.jpg';
 import Avatar from '@mui/material/Avatar';
 import Button from './common/Button';
 import Input from './common/Input';
+//MUI Imports
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
+import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 
 const LoggedInUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -141,7 +143,23 @@ const LoggedInUser = () => {
           </Typography>
           <Typography variant="subtitle1" gutterBottom>
             <strong>IP Address:</strong> {user.ipAddress}
+            <div>
+              <Gauge
+                value={user.loginCounter}
+                startAngle={-110}
+                endAngle={110}
+                height={66}
+                sx={{
+                  [`& .${gaugeClasses.valueText}`]: {
+                    fontSize: 12,
+                    transform: 'translate(0px, 0px)',
+                  },
+                }}
+                text={({ value, valueMax }) => `${value} / ${valueMax}`}
+              />
+            </div>
           </Typography>
+
           <Typography variant="subtitle1" gutterBottom>
             <strong>Login Counter:</strong> {user.loginCounter}
           </Typography>
