@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../state/store';
-import { fetchUserDetails } from '../state/userSlice';
+import { fetchUserDetails, updateUserDetails } from '../state/userSlice';
 import './LoggedInUser.css';
 import Spinner from './common/Spinner';
 import sample from '../assets/images/sample.jpg';
@@ -29,6 +29,8 @@ const LoggedInUser = () => {
     error,
   } = useSelector((state: RootState) => state.user);
 
+  console.log(useSelector((state: RootState) => state.user));
+
   useEffect(() => {
     dispatch(fetchUserDetails());
   }, [dispatch]);
@@ -38,13 +40,18 @@ const LoggedInUser = () => {
   const [editEmail, setEditEmail] = useState(email);
 
   const handleAvatarClick = () => setIsEditing(true);
+
   const handleSave = () => {
     setIsEditing(false);
-    // Handle saving changes
+    // Dispatch new details
+    if (editName && editEmail) {
+      dispatch(updateUserDetails({ name: editName, email: editEmail }));
+    }
   };
   const handleCancel = () => {
     setIsEditing(false);
-    setEditName(name);
+    setEditName(name || '');
+    setEditEmail(email || '');
     setEditEmail(email);
   };
 
@@ -117,7 +124,7 @@ const LoggedInUser = () => {
                 </div>
               ) : (
                 <div onClick={handleAvatarClick}>
-                   <Tooltip title="Click to edit" placement="top">
+                  <Tooltip title="Click to edit" placement="top">
                     <div>
                       <h3>{name}</h3>
                       <p>{email}</p>

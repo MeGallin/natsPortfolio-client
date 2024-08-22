@@ -33,7 +33,51 @@ export const fetchUserDetails = createAsyncThunk(
 
       return data.userDetails; // Return the userDetails object
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred';
+      return rejectWithValue(errorMessage);
+    }
+  },
+);
+
+// Thunk to update user details via PATCH request
+export const updateUserDetails = createAsyncThunk(
+  'user/updateUserDetails',
+  async (
+    updatedDetails: { name: string; email: string },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      // Get the token from the Redux auth state or localStorage
+      const state = getState() as RootState;
+      const token = state.auth.token || localStorage.getItem('authToken');
+
+      if (!token) {
+        throw new Error('No token available');
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_END_POINT}api/user-up`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedDetails),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update user details');
+      }
+
+      return data.userDetails; // Return the updated userDetails object
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred';
       return rejectWithValue(errorMessage);
     }
   },
@@ -117,6 +161,19 @@ const userSlice = createSlice({
         state.registeredWithGoogle = action.payload.registeredWithGoogle;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(updateUserDetails.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Update the state with the updated user details
+        state.name = action.payload.name;
+        state.email = action.payload.email;
+      })
+      .addCase(updateUserDetails.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       });
