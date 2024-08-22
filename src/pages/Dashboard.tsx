@@ -6,6 +6,9 @@ import { isAuthenticated } from '../auth'; // Ensure isAuthenticated is imported
 import LoggedInUser from '../components/LoggedInUser';
 import ContactsInformation from '../components/ContactsInformation';
 import './Dashboard.css';
+//MUI Imports
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,13 +23,17 @@ const Dashboard = () => {
 
   return (
     <>
-      <h1>Dashboard</h1>
-
-      <div className="dashboard-wrapper">
-        <LoggedInUser />
-        <ContactsInformation />
-      </div>
-      <Logout />
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={6} md={2}>
+          <LoggedInUser />
+        </Grid>
+        <Grid item xs={12} sm={6} md={10}>
+          <ContactsInformation />
+        </Grid>
+        <Grid item md={12}>
+          <Logout />
+        </Grid>
+      </Grid>
     </>
   );
 };

@@ -70,12 +70,14 @@ footer {
   background-color: var(--primary-color-dark);
   color: white;
   padding-top: 0.4em;
-
   text-align: center;
   font-size: 0.75em;
 }
 
 /* Active for Routes */
 .active {
-  border-bottom: 2px solid crimson;
+  border-bottom: 2px solid var(--error-color);
+}
+.border-temp {
+  border: 4px solid var(--error-color);
 }
