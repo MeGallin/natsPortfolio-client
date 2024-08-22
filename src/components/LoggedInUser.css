@@ -1,5 +1,5 @@
 .logged-in-user-wrapper {
-  border: 2px solid var(--secondary-color-light);
+  border: 1px solid var(--border-color-light);
 }
 .avatar-wrapper {
   background-color: white;
@@ -19,7 +19,7 @@
 .avatar-text-input-wrapper {
   position: absolute;
   z-index: 100;
-  border: 2px solid var(--secondary-color-light);
+  border: 1px solid var(--border-color-light);
   background-color: white;
   display: flex;
   flex-direction: column;

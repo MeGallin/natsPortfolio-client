@@ -13,6 +13,7 @@
   --accent-color-light: #d2b4de;
   --active-listening-color: #f7dc6f;
   --error-color: #e74c3c;
+  --border-color-light: lightgray;
 }
 
 /* Apply the font to the entire body */
@@ -78,6 +79,13 @@ footer {
 .active {
   border-bottom: 2px solid var(--error-color);
 }
+/* Utility Classes */
 .border-temp {
   border: 4px solid var(--error-color);
+}
+.bg-colour-white {
+  background-color: white;
+}
+.container {
+  border: 1px solid red;
 }
