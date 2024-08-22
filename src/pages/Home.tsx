@@ -1,17 +1,17 @@
 import Typography from '@mui/material/Typography';
 const Home = () => {
   return (
-    <div>
-      <Typography variant="h1" gutterBottom>
+    <>
+      <Typography variant="h3" align="center" gutterBottom>
         Home Page
       </Typography>
-      <Typography variant="body1" gutterBottom>
+      <Typography variant="body1" align="center" gutterBottom>
         Welcome to the Home page!
       </Typography>
-      <Typography variant="body2" gutterBottom>
+      <Typography variant="body2" align="center" gutterBottom>
         Welcome to the Home page!
       </Typography>
-    </div>
+    </>
   );
 };
 

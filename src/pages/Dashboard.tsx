@@ -7,7 +7,6 @@ import LoggedInUser from '../components/LoggedInUser';
 import ContactsInformation from '../components/ContactsInformation';
 import './Dashboard.css';
 //MUI Imports
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 const Dashboard = () => {
@@ -28,10 +27,17 @@ const Dashboard = () => {
           <LoggedInUser />
         </Grid>
         <Grid item xs={12} sm={6} md={10}>
-          <ContactsInformation />
+          <div className="border-temp">
+            <h1>UPLOAD IMAGES COMPONENT!</h1>
+          </div>
         </Grid>
-        <Grid item md={12}>
-          <Logout />
+        <Grid item xs={12} sm={2} md={2}>
+          <div className="border-temp">
+            <Logout />
+          </div>
+        </Grid>
+        <Grid item xs={12} sm={10} md={10}>
+          <ContactsInformation />
         </Grid>
       </Grid>
     </>

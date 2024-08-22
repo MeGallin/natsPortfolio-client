@@ -31,11 +31,12 @@ const Navigation = () => {
           <Link to="/about">About</Link>
         </li>
         <li>
-          <Link to="/contact">Contact</Link>
-        </li>
-        <li>
           <Link to="/portfolio">Portfolio</Link>
         </li>
+        <li>
+          <Link to="/contact">Contact</Link>
+        </li>
+
         {authenticated && (
           <li>
             <Link to="/dashboard">Dashboard</Link>
