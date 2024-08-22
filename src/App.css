@@ -77,7 +77,10 @@ footer {
 
 /* Active for Routes */
 .active {
-  border-bottom: 2px solid var(--error-color);
+  border-left: 4px solid var(--error-color);
+  background-color: var(--neutral-color);
+  color: var(--primary-color-dark);
+  padding: 7px 4px;
 }
 /* Utility Classes */
 .border-temp {
