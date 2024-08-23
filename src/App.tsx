@@ -5,12 +5,14 @@ import Footer from './components/common/Footer';
 
 function App() {
   return (
-    <div id="main-container">
+    <>
       <Header />
-      <Outlet />
+      <div id="main-container">
+        <Outlet />
+      </div>
 
       <Footer />
-    </div>
+    </>
   );
 }
 

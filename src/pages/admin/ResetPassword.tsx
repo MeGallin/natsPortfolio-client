@@ -1,27 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../../state/authSlice';
+import React, { useState } from 'react';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-//MUI Imports
-import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 
-const Login: React.FC = () => {
+const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
   const [errors, setErrors] = useState({
     email: '',
-    password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(5);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const validateEmail = (email: string): string => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,83 +23,53 @@ const Login: React.FC = () => {
     return '';
   };
 
-  const validatePassword = (password: string): string => {
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    return '';
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
+    if (emailError) {
       setErrors({
         email: emailError,
-        password: passwordError,
       });
       return;
     }
 
     setIsSubmitting(true);
+    setSuccessMessage(null);
     setErrorMessage(null);
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_END_POINT}api/login`,
+        `${import.meta.env.VITE_API_END_POINT}api/contact-formXX`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email }),
         },
       );
 
-      const result = await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        setSuccessMessage(data.data);
+        // Reset form fields
 
-      if (response.ok && result.success) {
-        dispatch(login({ user: result.name, token: result.token }));
-        localStorage.setItem('authToken', result.token);
-        setSuccessMessage(
-          `Welcome, ${result.name}! You will be redirected in ${countdown} seconds.`,
-        );
+        setEmail('');
 
-        // Trigger countdown and redirect inside useEffect to prevent setState during render
-        setIsSubmitting(false);
-        setCountdown(5);
+        setErrors({ email: '' });
       } else {
-        setErrorMessage(
-          'Login failed. Please check your credentials and try again.',
-        );
-        setIsSubmitting(false);
+        throw new Error('Failed to send message.');
       }
     } catch (error) {
       setErrorMessage(
-        'An error occurred while trying to log in. Please try again later.',
+        'There was an error submitting the form. Please try again later.',
       );
+    } finally {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (successMessage) {
-      const timer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown === 1) {
-            clearInterval(timer);
-            navigate('/dashboard');
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer); // Cleanup the interval on component unmount
-    }
-  }, [successMessage, navigate]);
 
   return (
     <>
@@ -119,9 +81,15 @@ const Login: React.FC = () => {
         gap={4}
         p={2}
       >
+        <Typography variant="h3" align="center" gutterBottom>
+          Password reset request
+        </Typography>
+        <Typography variant="body1" align="center" gutterBottom>
+          Please provide your email address.
+        </Typography>
         <form onSubmit={handleSubmit} style={formStyle}>
           <fieldset style={fieldsetStyle}>
-            <legend style={legendStyle}>Login</legend>
+            <legend style={legendStyle}>Contact Information</legend>
 
             {successMessage && (
               <p style={successMessageStyle}>{successMessage}</p>
@@ -134,35 +102,24 @@ const Login: React.FC = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={inputStyle}
+                style={inputStyle} // Applied full-width style
               />
               {errors.email && <span style={errorStyle}>{errors.email}</span>}
             </div>
 
-            <div style={fieldStyle}>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={inputStyle}
-              />
-              {errors.password && (
-                <span style={errorStyle}>{errors.password}</span>
-              )}
-            </div>
-
             <Button
-              text="Login"
-              color={import.meta.env.VITE_PRIMARY_COLOR}
-              disabled={isSubmitting || !email || !password}
-              style={buttonStyle}
+              text="Submit"
+              color={getComputedStyle(document.documentElement)
+                .getPropertyValue('--primary-color')
+                .trim()}
+              disabled={isSubmitting || !email}
+              style={buttonStyle} // Applied full-width style
             />
           </fieldset>
         </form>
         <div>
-          <Link href="/reset-password" color="inherit">
-            Forgotten your password?
+          <Link href="/admin" color="inherit">
+            Go back to login page?
           </Link>
         </div>
       </Box>
@@ -170,7 +127,7 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
 
 const formStyle: React.CSSProperties = {
   display: 'flex',
@@ -185,9 +142,9 @@ const formStyle: React.CSSProperties = {
 
 const fieldsetStyle: React.CSSProperties = {
   border: '1px solid #ccc',
-  borderRadius: '6px',
+  borderRadius: '6px', // Subtle border-radius
   padding: '15px',
-  backgroundColor: '#f9f9f9',
+  backgroundColor: '#f9f9f9', // Light background color
 };
 
 const legendStyle: React.CSSProperties = {
@@ -201,12 +158,24 @@ const fieldStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  width: '100%',
+  width: '100%', // Full width for the input
+  boxSizing: 'border-box',
+};
+
+const textareaStyle: React.CSSProperties = {
+  padding: '10px',
+  borderRadius: '4px',
+  border: '1px solid #ccc',
+  fontSize: '16px',
+  margin: '5px 0',
+  width: '100%', // Full width for the textarea
+  height: '100px',
+  resize: 'vertical',
   boxSizing: 'border-box',
 };
 
 const buttonStyle: React.CSSProperties = {
-  width: '100%',
+  width: '100%', // Full width for the button
   boxSizing: 'border-box',
 };
 
@@ -220,6 +189,7 @@ const errorStyle: React.CSSProperties = {
 const successMessageStyle: React.CSSProperties = {
   color: 'green',
   fontSize: '14px',
+  marginBottom: '10px',
 };
 
 const errorMessageStyle: React.CSSProperties = {
