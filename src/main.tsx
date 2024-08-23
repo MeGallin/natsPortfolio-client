@@ -21,7 +21,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const ResetPassword = lazy(() => import('./pages/Admin/ResetPassword'));
+const ForgotPassword = lazy(() => import('./pages/admin/ForgotPassword'));
 
 // Create the root route
 const rootRoute = new RootRoute({
@@ -59,10 +59,10 @@ const adminRoute = new Route({
   component: Admin,
 });
 
-const resetPasswordRoute = new Route({
+const forgotPasswordRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: 'reset-password',
-  component: ResetPassword,
+  path: 'forgot-password',
+  component: ForgotPassword,
 });
 
 // Protected Dashboard Route
@@ -86,7 +86,7 @@ const router = new Router({
     contactRoute,
     portfolioRoute,
     adminRoute,
-    resetPasswordRoute,
+    forgotPasswordRoute,
     dashboardRoute,
   ]),
 });
