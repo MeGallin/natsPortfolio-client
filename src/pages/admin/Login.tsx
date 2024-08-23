@@ -161,7 +161,7 @@ const Login: React.FC = () => {
           </fieldset>
         </form>
         <div>
-          <Link href="/reset-password" color="inherit">
+          <Link href="/forgot-password" color="inherit">
             Forgotten your password?
           </Link>
         </div>

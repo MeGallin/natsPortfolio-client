@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
-const ResetPassword: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
 
   const [errors, setErrors] = useState({
@@ -41,7 +41,7 @@ const ResetPassword: React.FC = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_END_POINT}api/contact-formXX`,
+        `${import.meta.env.VITE_API_END_POINT}api/forgot-password`,
         {
           method: 'POST',
           headers: {
@@ -127,7 +127,7 @@ const ResetPassword: React.FC = () => {
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;
 
 const formStyle: React.CSSProperties = {
   display: 'flex',
