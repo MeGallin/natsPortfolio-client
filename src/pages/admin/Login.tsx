@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../state/authSlice';
+import { validateEmail, validatePassword } from '../../utils/regEx';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 //MUI Imports
@@ -22,21 +23,6 @@ const Login: React.FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const validateEmail = (email: string): string => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return 'Please enter a valid email address.';
-    }
-    return '';
-  };
-
-  const validatePassword = (password: string): string => {
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    return '';
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
