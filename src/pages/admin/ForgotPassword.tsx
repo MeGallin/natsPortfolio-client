@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { validateEmail } from '../../utils/regEx';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+//MUI imports
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
@@ -14,14 +16,6 @@ const ForgotPassword: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const validateEmail = (email: string): string => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return 'Please enter a valid email address.';
-    }
-    return '';
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

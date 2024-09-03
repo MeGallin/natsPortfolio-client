@@ -3,6 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../state/store';
 import { RootState } from '../state/store'; // Adjust the import based on your store setup
 import { submitContactForm } from '../state/contactFormSlice';
+import {
+  validateFullName,
+  validateEmail,
+  validateMessage,
+} from '../utils/regEx';
 import Input from './common/Input';
 import Button from './common/Button';
 
@@ -29,29 +34,6 @@ const ContactForm: React.FC = () => {
       setMessage('');
     }
   }, [successMessage]);
-
-  const validateFullName = (name: string): string => {
-    const parts = name.trim().split(' ');
-    if (parts.length < 2) {
-      return 'Please enter both your first name and surname.';
-    }
-    return '';
-  };
-
-  const validateEmail = (email: string): string => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return 'Please enter a valid email address.';
-    }
-    return '';
-  };
-
-  const validateMessage = (message: string): string => {
-    if (!message.trim()) {
-      return 'Message cannot be empty.';
-    }
-    return '';
-  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
