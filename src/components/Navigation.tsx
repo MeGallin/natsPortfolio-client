@@ -39,7 +39,7 @@ const Navigation = () => {
 
         {authenticated && (
           <li>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/dashboard">DB</Link>
           </li>
         )}
       </ul>

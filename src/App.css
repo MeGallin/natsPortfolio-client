@@ -51,7 +51,9 @@ html {
 #main-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - (var(--header-height) + var(--footer-height)));
+  /* The 8px is the padding on the a tag in header */
+  height: calc(100vh - var(--header-height) - var(--footer-height) + 8px);
+  /* The 8px is the padding on the a tag in header */
   overflow-y: auto;
 }
 

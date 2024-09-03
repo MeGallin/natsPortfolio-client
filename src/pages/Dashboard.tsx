@@ -24,6 +24,7 @@ const Dashboard = () => {
     <>
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} md={2}>
+          <Logout />
           <LoggedInUser />
         </Grid>
         <Grid item xs={12} sm={6} md={10}>
@@ -31,11 +32,7 @@ const Dashboard = () => {
             <h1>UPLOAD IMAGES COMPONENT!</h1>
           </div>
         </Grid>
-        <Grid item xs={12} sm={2} md={2}>
-          <div className="border-temp">
-            <Logout />
-          </div>
-        </Grid>
+
         <Grid item xs={12} sm={10} md={10}>
           <ContactsInformation />
         </Grid>
