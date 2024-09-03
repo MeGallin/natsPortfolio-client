@@ -1,6 +1,6 @@
 :root {
   --header-height: 2em; /* Adjust the height as needed */
-  --footer-height: 2em; /* Adjust the height as needed */
+  --footer-height: 4em; /* Adjust the height as needed */
   --primary-color: #2e86c1;
   --secondary-color: #f39c12;
   --accent-color: #9b59b6;
@@ -52,7 +52,7 @@ html {
   display: flex;
   flex-direction: column;
   /* The 8px is the padding on the a tag in header */
-  height: calc(100vh - var(--header-height) - var(--footer-height) + 8px);
+  height: calc(100vh - var(--header-height) - var(--footer-height) + 16px);
   /* The 8px is the padding on the a tag in header */
   overflow-y: auto;
 }

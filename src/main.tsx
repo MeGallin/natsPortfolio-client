@@ -93,13 +93,11 @@ const router = new Router({
 
 // Render the application with the Redux Provider and RouterProvider
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Suspense fallback={<Spinner />}>
-          <RouterProvider router={router} />
-        </Suspense>
-      </BrowserRouter>
-    </Provider>
-  </StrictMode>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <Suspense fallback={<Spinner />}>
+        <RouterProvider router={router} />
+      </Suspense>
+    </BrowserRouter>
+  </Provider>,
 );
