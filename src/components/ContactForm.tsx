@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../state/store';
+import { RootState } from '../state/store'; // Adjust the import based on your store setup
+import { submitContactForm } from '../state/contactFormSlice';
 import Input from './common/Input';
 import Button from './common/Button';
 
@@ -11,9 +15,20 @@ const ContactForm: React.FC = () => {
     email: '',
     message: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const { isSubmitting, successMessage, errorMessage } = useSelector(
+    (state: RootState) => state.contactForm,
+  );
+
+  useEffect(() => {
+    if (successMessage) {
+      setName('');
+      setEmail('');
+      setMessage('');
+    }
+  }, [successMessage]);
 
   const validateFullName = (name: string): string => {
     const parts = name.trim().split(' ');
@@ -38,7 +53,7 @@ const ContactForm: React.FC = () => {
     return '';
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const nameError = validateFullName(name);
@@ -51,43 +66,11 @@ const ContactForm: React.FC = () => {
         email: emailError,
         message: messageError,
       });
+
       return;
     }
 
-    setIsSubmitting(true);
-    setSuccessMessage(null);
-    setErrorMessage(null);
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_END_POINT}api/contact-form`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, message }),
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setSuccessMessage(data.data);
-        // Reset form fields
-        setName('');
-        setEmail('');
-        setMessage('');
-        setErrors({ name: '', email: '', message: '' });
-      } else {
-        throw new Error('Failed to send message.');
-      }
-    } catch (error) {
-      setErrorMessage(
-        'There was an error submitting the form. Please try again later.',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    dispatch(submitContactForm({ name, email, message }));
   };
 
   return (
