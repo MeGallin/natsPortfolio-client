@@ -156,18 +156,6 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-const textareaStyle: React.CSSProperties = {
-  padding: '10px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-  fontSize: '16px',
-  margin: '5px 0',
-  width: '100%', // Full width for the textarea
-  height: '100px',
-  resize: 'vertical',
-  boxSizing: 'border-box',
-};
-
 const buttonStyle: React.CSSProperties = {
   width: '100%', // Full width for the button
   boxSizing: 'border-box',
