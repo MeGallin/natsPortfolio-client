@@ -9,6 +9,7 @@ import {
   Box,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import AnimatedText from '../components/AnimatedText';
 
 const AboutMe: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const AboutMe: React.FC = () => {
         />
         <Typography variant="h3" gutterBottom>
           Natalie Allin
+          <AnimatedText />
         </Typography>
         <Typography variant="h5" color="textSecondary">
           Graphic Design Student
