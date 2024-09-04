@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography';
 import ContactForm from '../components/ContactForm';
-import Grid from '@mui/material/Grid';
+
 import Box from '@mui/material/Box';
 
 const Contact = () => {
