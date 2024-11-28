@@ -1,5 +1,5 @@
 :root {
-  --header-height: 2em; /* Adjust the height as needed */
+  --header-height: 2.56em; /* Adjust the height as needed */
   --footer-height: 4em; /* Adjust the height as needed */
   --primary-color: #2e86c1;
   --secondary-color: #f39c12;
@@ -57,7 +57,7 @@ html {
   overflow-y: auto;
 }
 
-header {
+/* header {
   width: 100%;
   height: var(--header-height);
   background-color: var(--primary-color-dark);
@@ -65,7 +65,7 @@ header {
   padding: 5px;
   position: sticky;
   top: 0;
-}
+} */
 
 footer {
   margin-top: auto;
