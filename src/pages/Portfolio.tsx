@@ -1,28 +1,11 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Box } from '@mui/material';
+import Gallery from '../components/Gallery';
 
 const Portfolio = () => {
   return (
-    <>
-      <Box
-        my={4}
-        display="flex"
-        alignItems="center"
-        flexDirection="column"
-        gap={4}
-        p={2}
-      >
-        <Typography variant="h3" align="center" gutterBottom>
-          Portfolio
-        </Typography>
-        <Typography variant="body1" align="center" gutterBottom>
-          This is my portfolio page
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          This is my portfolio page
-        </Typography>
-      </Box>
-    </>
+    <Box sx={{ width: '100%', height: '100vh', bgcolor: 'background.default' }}>
+      <Gallery />
+    </Box>
   );
 };
 
