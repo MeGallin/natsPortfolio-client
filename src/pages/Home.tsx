@@ -1,11 +1,17 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Container } from '@mui/material';
 import Name from '../components/Name';
 
 const Home = () => {
   return (
     <>
-      <Name />
+      <Container
+        sx={{
+          padding: 4,
+          maxWidth: 'lg',
+        }}
+      >
+        <Name />
+      </Container>
     </>
   );
 };

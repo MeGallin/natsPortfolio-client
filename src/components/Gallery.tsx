@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   ImageList,
   ImageListItem,
@@ -9,8 +9,6 @@ import {
   useTheme,
   Modal,
   Box,
-  TextField,
-  Button,
   Typography,
 } from '@mui/material';
 
@@ -100,12 +98,6 @@ function srcset(image: string, size: number, rows = 1, cols = 1) {
   };
 }
 
-interface Annotation {
-  x: number;
-  y: number;
-  text: string;
-}
-
 interface ImageData {
   img: string;
   title: string;
@@ -122,47 +114,15 @@ export default function Gallery() {
 
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
-  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation | null>(
-    null,
-  );
-  const imageRef = useRef<HTMLImageElement>(null);
 
   const handleOpen = (img: ImageData) => {
     setSelectedImage(img);
     setOpen(true);
-    setAnnotations([]);
   };
 
   const handleClose = () => {
     setOpen(false);
     setSelectedImage(null);
-    setAnnotations([]);
-    setCurrentAnnotation(null);
-  };
-
-  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
-    if (imageRef.current) {
-      const rect = imageRef.current.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      setCurrentAnnotation({ x, y, text: '' });
-    }
-  };
-
-  const handleAnnotationTextChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    if (currentAnnotation) {
-      setCurrentAnnotation({ ...currentAnnotation, text: event.target.value });
-    }
-  };
-
-  const handleAnnotationSubmit = () => {
-    if (currentAnnotation) {
-      setAnnotations([...annotations, currentAnnotation]);
-      setCurrentAnnotation(null);
-    }
   };
 
   const getColumns = () => {
@@ -234,26 +194,10 @@ export default function Gallery() {
             <>
               <div className="relative">
                 <img
-                  ref={imageRef}
                   src={selectedImage.img}
                   alt={selectedImage.title}
-                  onClick={handleImageClick}
-                  className="w-full h-auto object-contain cursor-crosshair"
+                  className="w-full h-auto object-contain"
                 />
-                {annotations.map((annotation, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      position: 'absolute',
-                      left: `${annotation.x}%`,
-                      top: `${annotation.y}%`,
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                    className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white font-bold"
-                  >
-                    {index + 1}
-                  </div>
-                ))}
               </div>
               <Typography variant="h6" component="h2" sx={{ mt: 2, mb: 1 }}>
                 {selectedImage.title}
@@ -265,36 +209,6 @@ export default function Gallery() {
                 {selectedImage.description}
               </Typography>
             </>
-          )}
-          {currentAnnotation && (
-            <Box sx={{ mt: 2 }}>
-              <TextField
-                fullWidth
-                label="Annotation text"
-                variant="outlined"
-                value={currentAnnotation.text}
-                onChange={handleAnnotationTextChange}
-              />
-              <Button
-                variant="contained"
-                onClick={handleAnnotationSubmit}
-                sx={{ mt: 1 }}
-              >
-                Add Annotation
-              </Button>
-            </Box>
-          )}
-          {annotations.length > 0 && (
-            <Box sx={{ mt: 2 }}>
-              <h3 className="text-xl font-bold mb-2">Annotations:</h3>
-              <ul className="list-decimal pl-5">
-                {annotations.map((annotation, index) => (
-                  <li key={index} className="mb-1">
-                    {annotation.text}
-                  </li>
-                ))}
-              </ul>
-            </Box>
           )}
         </Box>
       </Modal>
