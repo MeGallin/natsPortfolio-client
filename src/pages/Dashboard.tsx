@@ -8,6 +8,7 @@ import ContactsInformation from '../components/ContactsInformation';
 import './Dashboard.css';
 //MUI Imports
 import Grid from '@mui/material/Grid';
+import FileUploader from '../components/common/FileUploader';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,9 +29,7 @@ const Dashboard = () => {
           <LoggedInUser />
         </Grid>
         <Grid item xs={12} sm={6} md={10}>
-          <div className="border-temp">
-            <h1>UPLOAD IMAGES COMPONENT!</h1>
-          </div>
+          <FileUploader />
         </Grid>
 
         <Grid item xs={12} sm={10} md={10}>
