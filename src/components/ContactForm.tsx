@@ -8,8 +8,8 @@ import {
   validateEmail,
   validateMessage,
 } from '../utils/regEx';
-import Input from './common/Input';
 import Button from './common/Button';
+import { TextField, Box } from '@mui/material';
 
 const ContactForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -63,46 +63,50 @@ const ContactForm: React.FC = () => {
         {successMessage && <p style={successMessageStyle}>{successMessage}</p>}
         {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
 
-        <div style={fieldStyle}>
-          <Input
-            type="text"
-            placeholder="Full Name"
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            fullWidth
+            label="Full Name"
+            variant="outlined"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={inputStyle} // Applied full-width style
+            error={!!errors.name}
+            helperText={errors.name}
           />
-          {errors.name && <span style={errorStyle}>{errors.name}</span>}
-        </div>
 
-        <div style={fieldStyle}>
-          <Input
+          <TextField
+            fullWidth
+            label="Email"
+            variant="outlined"
             type="email"
-            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle} // Applied full-width style
+            error={!!errors.email}
+            helperText={errors.email}
           />
-          {errors.email && <span style={errorStyle}>{errors.email}</span>}
-        </div>
 
-        <div style={fieldStyle}>
-          <textarea
-            placeholder="Your Message"
+          <TextField
+            fullWidth
+            label="Your Message"
+            variant="outlined"
+            multiline
+            rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            style={textareaStyle}
+            error={!!errors.message}
+            helperText={errors.message}
           />
-          {errors.message && <span style={errorStyle}>{errors.message}</span>}
-        </div>
 
-        <Button
-          text="Submit"
-          color={getComputedStyle(document.documentElement)
-            .getPropertyValue('--primary-color')
-            .trim()}
-          disabled={isSubmitting || !name || !email || !message}
-          style={buttonStyle} // Applied full-width style
-        />
+          <Button
+            text="Submit"
+            color={getComputedStyle(document.documentElement)
+              .getPropertyValue('--primary-color')
+              .trim()}
+            type="submit"
+            disabled={isSubmitting}
+            style={buttonStyle}
+          />
+        </Box>
       </fieldset>
     </form>
   );
