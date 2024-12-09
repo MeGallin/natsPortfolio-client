@@ -50,7 +50,7 @@ export const validateDescription = (description: string): string => {
   return '';
 };
 
-export const validateAuthor = (author: string): string => {
+export const  validateBy = (author: string): string => {
   const trimmedAuthor = author.trim();
   if (!trimmedAuthor) {
     return 'Author name is required.';

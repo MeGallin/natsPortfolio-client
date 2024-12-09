@@ -1,29 +1,43 @@
-import { ChangeEvent, useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import { ChangeEvent, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Box, Typography, IconButton, TextField } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Spinner from './Spinner';
-import { validateTitle, validateDescription, validateAuthor } from '../../utils/regEx';
+import {
+  validateTitle,
+  validateDescription,
+  validateBy,
+} from '../../utils/regEx';
+import {
+  uploadImage,
+  setFileInfo,
+  setPreview,
+  setTitle,
+  setDescription,
+  setBy,
+  setErrors,
+  resetForm,
+} from '../../state/imageUploaderSlice';
+import { RootState, AppDispatch } from '../../state/store';
 
 const FileUploader = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>('');
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [author, setAuthor] = useState<string>('');
-  const [errors, setErrors] = useState({
-    title: '',
-    description: '',
-    author: ''
-  });
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    status,
+    fileInfo,
+    preview,
+    title,
+    description,
+    by,
+    errors,
+    successMessage,
+    errorMessage,
+  } = useSelector((state: RootState) => state.imageUploader);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
-  const [status, setStatus] = useState<UploadStatus>('idle');
-
   useEffect(() => {
-    // Clean up the URL when component unmounts or when file changes
     return () => {
       if (preview) {
         URL.revokeObjectURL(preview);
@@ -34,60 +48,46 @@ const FileUploader = () => {
   const validateForm = (): boolean => {
     const titleError = validateTitle(title);
     const descriptionError = validateDescription(description);
-    const authorError = validateAuthor(author);
+    const byError = validateBy(by);
 
-    setErrors({
-      title: titleError,
-      description: descriptionError,
-      author: authorError
-    });
+    dispatch(
+      setErrors({
+        title: titleError,
+        description: descriptionError,
+        by: byError,
+      }),
+    );
 
-    return !titleError && !descriptionError && !authorError && !!file;
+    return !titleError && !descriptionError && !byError && !!fileInfo;
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      // Check if file is an image
       if (!selectedFile.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      setFile(selectedFile);
-      // Create preview URL
+      dispatch(
+        setFileInfo({
+          name: selectedFile.name,
+          size: selectedFile.size,
+          type: selectedFile.type,
+        }),
+      );
       const previewUrl = URL.createObjectURL(selectedFile);
-      setPreview(previewUrl);
-      setStatus('idle'); // Reset status when new file is selected
+      dispatch(setPreview(previewUrl));
     }
   };
 
   const handleFileUpload = async () => {
     if (!validateForm()) return;
+    const file = fileInputRef.current?.files?.[0]; // Retrieve file
 
-    setStatus('uploading');
-    const formData = new FormData();
-    formData.append('image', file!);
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('by', author);
-
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_END_POINT}api/upload`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      );
-      setStatus('success');
-      // Clear all inputs after successful upload
-      setTimeout(() => {
-        handleCancel();
-      }, 2000); // Clear after 2 seconds so user can see success message
-    } catch (error) {
-      setStatus('error');
+    if (file) {
+      dispatch(uploadImage({ file, title, description, by }));
+    } else {
+      console.error('No file selected.');
     }
   };
 
@@ -96,37 +96,36 @@ const FileUploader = () => {
   };
 
   const handleCancel = () => {
-    setFile(null);
     if (preview) {
       URL.revokeObjectURL(preview);
-      setPreview('');
     }
-    setStatus('idle');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    setTitle('');
-    setDescription('');
-    setAuthor('');
+    dispatch(resetForm());
   };
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, margin: '0 auto', padding: 2 }}>
       <form style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-        <fieldset style={{ 
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          padding: '20px',
-          margin: '0',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-        }}>
-          <legend style={{
-            padding: '0 10px',
-            color: '#333',
-            fontSize: '1.2rem',
-            fontWeight: 'bold'
-          }}>
+        <fieldset
+          style={{
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            padding: '20px',
+            margin: '0',
+            backgroundColor: 'white',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          }}
+        >
+          <legend
+            style={{
+              padding: '0 10px',
+              color: '#333',
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+            }}
+          >
             Portfolio Image Upload
           </legend>
 
@@ -138,7 +137,7 @@ const FileUploader = () => {
             accept="image/*"
           />
 
-          {!file && (
+          {!fileInfo && (
             <Button
               variant="contained"
               onClick={handleButtonClick}
@@ -149,7 +148,7 @@ const FileUploader = () => {
             </Button>
           )}
 
-          {file && (
+          {fileInfo && (
             <Box sx={{ position: 'relative', display: 'inline-block', mb: 3 }}>
               <img
                 src={preview}
@@ -180,61 +179,82 @@ const FileUploader = () => {
             </Box>
           )}
 
-          {file && (
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              File name: {file.name}
-            </Typography>
-          )}
-
-          {file && (
-            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {fileInfo && (
+            <Box
+              sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}
+            >
               <TextField
                 fullWidth
                 label="Title"
                 value={title}
                 onChange={(e) => {
-                  setTitle(e.target.value);
-                  setErrors(prev => ({ ...prev, title: validateTitle(e.target.value) }));
+                  dispatch(setTitle(e.target.value));
+                  dispatch(
+                    setErrors({
+                      ...errors,
+                      title: validateTitle(e.target.value),
+                    }),
+                  );
                 }}
                 error={!!errors.title}
                 helperText={errors.title}
                 margin="normal"
               />
+
               <TextField
                 fullWidth
                 label="Description"
-                multiline
-                rows={4}
                 value={description}
                 onChange={(e) => {
-                  setDescription(e.target.value);
-                  setErrors(prev => ({ ...prev, description: validateDescription(e.target.value) }));
+                  dispatch(setDescription(e.target.value));
+                  dispatch(
+                    setErrors({
+                      ...errors,
+                      description: validateDescription(e.target.value),
+                    }),
+                  );
                 }}
                 error={!!errors.description}
                 helperText={errors.description}
+                multiline
+                rows={4}
                 margin="normal"
               />
+
               <TextField
                 fullWidth
-                label="Author"
-                value={author}
+                label="By"
+                value={by}
                 onChange={(e) => {
-                  setAuthor(e.target.value);
-                  setErrors(prev => ({ ...prev, author: validateAuthor(e.target.value) }));
+                  dispatch(setBy(e.target.value));
+                  dispatch(
+                    setErrors({
+                      ...errors,
+                      by: validateBy(e.target.value),
+                    }),
+                  );
                 }}
-                error={!!errors.author}
-                helperText={errors.author}
+                error={!!errors.by}
+                helperText={errors.by}
                 margin="normal"
               />
             </Box>
           )}
 
-          {file && status === 'idle' && (
+          {fileInfo && status === 'idle' && (
             <Box sx={{ mt: 2 }}>
               <Button
                 variant="contained"
                 onClick={handleFileUpload}
-                disabled={!file || !title.trim() || !description.trim() || !author.trim() || !!errors.title || !!errors.description || !!errors.author}
+                disabled={
+                  !fileInfo ||
+                  !title.trim() ||
+                  !description.trim() ||
+                  !by.trim() ||
+                  !!errors.title ||
+                  !!errors.description ||
+                  !!errors.by
+                }
                 sx={{ mt: 2 }}
               >
                 Upload
@@ -255,15 +275,15 @@ const FileUploader = () => {
             </Box>
           )}
 
-          {status === 'success' && (
-            <Typography color="success.main" sx={{ mt: 2 }}>
-              File uploaded successfully!
+          {successMessage && (
+            <Typography color="success" sx={{ mt: 2 }}>
+              {successMessage}
             </Typography>
           )}
 
-          {status === 'error' && (
+          {errorMessage && (
             <Typography color="error" sx={{ mt: 2 }}>
-              Error uploading file.
+              {errorMessage}
             </Typography>
           )}
         </fieldset>
