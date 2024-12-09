@@ -27,3 +27,36 @@ export const validatePassword = (password: string): string => {
   }
   return '';
 };
+
+export const validateTitle = (title: string): string => {
+  const trimmedTitle = title.trim();
+  if (!trimmedTitle) {
+    return 'Title is required.';
+  }
+  if (trimmedTitle.length < 3) {
+    return 'Title must be at least 3 characters long.';
+  }
+  return '';
+};
+
+export const validateDescription = (description: string): string => {
+  const trimmedDescription = description.trim();
+  if (!trimmedDescription) {
+    return 'Description is required.';
+  }
+  if (trimmedDescription.length < 10) {
+    return 'Description must be at least 10 characters long.';
+  }
+  return '';
+};
+
+export const validateAuthor = (author: string): string => {
+  const trimmedAuthor = author.trim();
+  if (!trimmedAuthor) {
+    return 'Author name is required.';
+  }
+  if (trimmedAuthor.length < 2) {
+    return 'Author name must be at least 2 characters long.';
+  }
+  return '';
+};

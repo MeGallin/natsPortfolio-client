@@ -4,6 +4,7 @@ import { Button, Box, Typography, IconButton, TextField } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Spinner from './Spinner';
+import { validateTitle, validateDescription, validateAuthor } from '../../utils/regEx';
 
 const FileUploader = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -11,6 +12,11 @@ const FileUploader = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [author, setAuthor] = useState<string>('');
+  const [errors, setErrors] = useState({
+    title: '',
+    description: '',
+    author: ''
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
@@ -24,6 +30,20 @@ const FileUploader = () => {
       }
     };
   }, [preview]);
+
+  const validateForm = (): boolean => {
+    const titleError = validateTitle(title);
+    const descriptionError = validateDescription(description);
+    const authorError = validateAuthor(author);
+
+    setErrors({
+      title: titleError,
+      description: descriptionError,
+      author: authorError
+    });
+
+    return !titleError && !descriptionError && !authorError && !!file;
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -42,14 +62,14 @@ const FileUploader = () => {
   };
 
   const handleFileUpload = async () => {
-    if (!file) return;
+    if (!validateForm()) return;
 
     setStatus('uploading');
     const formData = new FormData();
-    formData.append('image', file); // Use the key 'image' to match backend
-    formData.append('title', title); // Use actual title from input
-    formData.append('description', description); // Use actual description from input
-    formData.append('by', author); // Use actual author from input
+    formData.append('image', file!);
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('by', author);
 
     try {
       await axios.post(
@@ -91,7 +111,7 @@ const FileUploader = () => {
   };
 
   return (
-    <Box sx={{ textAlign: 'center', p: 3 }}>
+    <Box sx={{ width: '100%', maxWidth: 600, margin: '0 auto', padding: 2 }}>
       <form style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
         <fieldset style={{ 
           border: '1px solid #ccc',
@@ -172,44 +192,52 @@ const FileUploader = () => {
                 fullWidth
                 label="Title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                variant="outlined"
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  setErrors(prev => ({ ...prev, title: validateTitle(e.target.value) }));
+                }}
+                error={!!errors.title}
+                helperText={errors.title}
+                margin="normal"
               />
               <TextField
                 fullWidth
                 label="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                variant="outlined"
                 multiline
                 rows={4}
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  setErrors(prev => ({ ...prev, description: validateDescription(e.target.value) }));
+                }}
+                error={!!errors.description}
+                helperText={errors.description}
+                margin="normal"
               />
               <TextField
                 fullWidth
                 label="Author"
                 value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                variant="outlined"
+                onChange={(e) => {
+                  setAuthor(e.target.value);
+                  setErrors(prev => ({ ...prev, author: validateAuthor(e.target.value) }));
+                }}
+                error={!!errors.author}
+                helperText={errors.author}
+                margin="normal"
               />
             </Box>
           )}
 
-          {file && status !== 'uploading' && (
+          {file && status === 'idle' && (
             <Box sx={{ mt: 2 }}>
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleFileUpload}
-                sx={{ mr: 1 }}
+                disabled={!file || !title.trim() || !description.trim() || !author.trim() || !!errors.title || !!errors.description || !!errors.author}
+                sx={{ mt: 2 }}
               >
                 Upload
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleButtonClick}
-              >
-                Choose Different Image
               </Button>
             </Box>
           )}
