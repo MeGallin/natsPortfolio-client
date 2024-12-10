@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   ImageList,
   ImageListItem,
@@ -10,84 +11,10 @@ import {
   Modal,
   Box,
   Typography,
+  CircularProgress,
 } from '@mui/material';
-
-// Updated itemData with descriptions
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-    author: '@bkristastucchio',
-    rows: 2,
-    cols: 2,
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-    author: '@rollelflex_graphy726',
-    rows: 1,
-    cols: 1,
-    description:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-    author: '@helloimnik',
-    description:
-      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-    author: '@nolanissac',
-    cols: 2,
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-    author: '@hjrc33',
-    cols: 2,
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-    author: '@arwinneil',
-    rows: 2,
-    cols: 2,
-    description:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-    author: '@tjdragotta',
-    description:
-      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-    title: 'Fern',
-    author: '@katie_wasserman',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-    title: 'Mushrooms',
-    author: '@silverdalex',
-    rows: 2,
-    cols: 2,
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-];
+import { AppDispatch, RootState } from '../state/store';
+import { fetchGalleryImages } from '../state/imagesGallerySlice';
 
 function srcset(image: string, size: number, rows = 1, cols = 1) {
   return {
@@ -98,25 +25,32 @@ function srcset(image: string, size: number, rows = 1, cols = 1) {
   };
 }
 
-interface ImageData {
-  img: string;
+interface ModalImageData {
   title: string;
-  author: string;
-  rows?: number;
-  cols?: number;
   description: string;
+  by: string;
+  url: string;
 }
 
 export default function Gallery() {
+  const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
+  // Get gallery state from Redux
+  const { images, status, error } = useSelector((state: RootState) => state.gallery);
+
+  // Modal state
   const [open, setOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
+  const [selectedImage, setSelectedImage] = useState<ModalImageData | null>(null);
 
-  const handleOpen = (img: ImageData) => {
-    setSelectedImage(img);
+  // Fetch images when component mounts
+  useEffect(() => {
+    dispatch(fetchGalleryImages());
+  }, [dispatch]);
+
+  const handleOpen = (image: ModalImageData) => {
+    setSelectedImage(image);
     setOpen(true);
   };
 
@@ -125,53 +59,65 @@ export default function Gallery() {
     setSelectedImage(null);
   };
 
-  const getColumns = () => {
-    if (isSmallScreen) return 2;
-    if (isMediumScreen) return 3;
-    return 4;
-  };
+  if (status === 'loading') {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Typography color="error">{error || 'Failed to load gallery images'}</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
+    <>
       <ImageList
+        sx={{
+          width: '100%',
+          height: '100%',
+          transform: 'translateZ(0)',
+        }}
         variant="quilted"
-        cols={getColumns()}
-        rowHeight={121}
-        className="w-full"
-        gap={16}
+        cols={matches ? 4 : 2}
+        rowHeight={200}
       >
-        {itemData.map((item) => (
+        {images.map((item) => (
           <ImageListItem
-            key={item.img}
-            cols={item.cols || 1}
-            rows={item.rows || 1}
-            className="cursor-pointer"
+            key={item._id}
+            cols={item.col || 1}
+            rows={item.row || 1}
             onClick={() => handleOpen(item)}
+            sx={{ cursor: 'pointer' }}
           >
             <img
-              {...srcset(item.img, 121, item.rows, item.cols)}
+              {...srcset(item.url, 200, item.row, item.col)}
               alt={item.title}
               loading="lazy"
-              className="w-full h-full object-cover rounded-md"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <ImageListItemBar
               title={item.title}
-              subtitle={<span>by: {item.author}</span>}
+              subtitle={item.by}
               sx={{
                 background:
-                  'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
-                borderBottomLeftRadius: 4,
-                borderBottomRightRadius: 4,
+                  'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
               }}
             />
           </ImageListItem>
         ))}
       </ImageList>
+
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-image"
-        aria-describedby="modal-image-description"
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         <Box
           sx={{
@@ -179,39 +125,40 @@ export default function Gallery() {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '90%',
-            maxWidth: '1000px',
+            width: matches ? '80%' : '95%',
             maxHeight: '90vh',
             bgcolor: 'background.paper',
+            border: '2px solid #000',
             boxShadow: 24,
             p: 4,
-            outline: 'none',
-            borderRadius: '8px',
-            overflowY: 'auto',
+            overflow: 'auto',
           }}
         >
           {selectedImage && (
             <>
-              <div className="relative">
-                <img
-                  src={selectedImage.img}
-                  alt={selectedImage.title}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-              <Typography variant="h6" component="h2" sx={{ mt: 2, mb: 1 }}>
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.title}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: '70vh',
+                  objectFit: 'contain',
+                }}
+              />
+              <Typography id="modal-modal-title" variant="h6" component="h2" mt={2}>
                 {selectedImage.title}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                by: {selectedImage.author}
+              <Typography variant="subtitle1" color="text.secondary">
+                By {selectedImage.by}
               </Typography>
-              <Typography variant="body1" sx={{ mb: 2 }}>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 {selectedImage.description}
               </Typography>
             </>
           )}
         </Box>
       </Modal>
-    </div>
+    </>
   );
 }
