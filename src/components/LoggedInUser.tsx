@@ -12,7 +12,16 @@ import Input from './common/Input';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
+
+import { Grid, Paper } from '@mui/material';
+
+import { styled } from '@mui/system';
+
+// Styled component for custom Paper
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+}));
 
 const LoggedInUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -48,16 +57,16 @@ const LoggedInUser = () => {
   if (user.status === 'failed') return <p>Error: {user.error}</p>;
 
   return (
-    <div className="logged-in-user-wrapper">
-      <div className="avatar-wrapper">
-        <Box
-          my={1}
-          mx={4}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ height: '100%' }}
-        >
+    <Grid container spacing={1}>
+      <Box
+        my={2}
+        mx={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ height: '100%' }}
+      >
+        <StyledPaper>
           {user.profileImage && (
             <Avatar
               alt="Profile"
@@ -65,61 +74,70 @@ const LoggedInUser = () => {
               sx={{ width: 100, height: 100 }}
             />
           )}
-        </Box>
-        <div className="avatar-text-wrapper">
-          {isEditing ? (
-            <div className="avatar-text-input-wrapper">
-              <Typography variant="h6" gutterBottom>
-                Edit
-              </Typography>
-              <div style={fieldStyle}>
-                <Input
-                  type="text"
-                  placeholder="Full Name"
-                  value={editName || ''}
-                  onChange={(e) => setEditName(e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-              <div style={fieldStyle}>
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={editEmail || ''}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-              <div className="avatar-text-button-wrapper">
-                <Button
-                  text="Save"
-                  color={getComputedStyle(document.documentElement)
-                    .getPropertyValue('--primary-color')
-                    .trim()}
-                  disabled={!editName || !editEmail}
-                  onClick={handleSave}
-                />
-                <Button
-                  text="Discard"
-                  color={getComputedStyle(document.documentElement)
-                    .getPropertyValue('--secondary-color')
-                    .trim()}
-                  onClick={handleCancel}
-                />
-              </div>
+        </StyledPaper>
+      </Box>
+
+      <Box
+        my={2}
+        mx={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ height: '100%' }}
+      >
+        {isEditing ? (
+          <div className="avatar-text-input-wrapper">
+            <Typography variant="h6" gutterBottom>
+              Edit
+            </Typography>
+            <div style={fieldStyle}>
+              <Input
+                type="text"
+                placeholder="Full Name"
+                value={editName || ''}
+                onChange={(e) => setEditName(e.target.value)}
+                style={inputStyle}
+              />
             </div>
-          ) : (
-            <div onClick={handleAvatarClick}>
-              <Tooltip title="Click to edit" placement="top">
-                <div>
-                  <h3>{user.name}</h3>
-                  <p>{user.email}</p>
-                </div>
-              </Tooltip>
+            <div style={fieldStyle}>
+              <Input
+                type="email"
+                placeholder="Email"
+                value={editEmail || ''}
+                onChange={(e) => setEditEmail(e.target.value)}
+                style={inputStyle}
+              />
             </div>
-          )}
-        </div>
-      </div>
+            <div className="avatar-text-button-wrapper">
+              <Button
+                text="Save"
+                color={getComputedStyle(document.documentElement)
+                  .getPropertyValue('--primary-color')
+                  .trim()}
+                disabled={!editName || !editEmail}
+                onClick={handleSave}
+              />
+              <Button
+                text="Discard"
+                color={getComputedStyle(document.documentElement)
+                  .getPropertyValue('--secondary-color')
+                  .trim()}
+                onClick={handleCancel}
+              />
+            </div>
+          </div>
+        ) : (
+          <div onClick={handleAvatarClick}>
+            <Tooltip title="Click to edit" placement="top">
+              <StyledPaper>
+                <h3>{user.name}</h3>
+                <p>{user.email}</p>
+              </StyledPaper>
+            </Tooltip>
+          </div>
+        )}
+      </Box>
+
       <Box
         my={1}
         mx={4}
@@ -129,47 +147,29 @@ const LoggedInUser = () => {
         flexDirection="column"
         sx={{ height: '100%' }}
       >
-        <div className="avatar-text-wrapper">
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>Admin Status:</strong>{' '}
-            {user.isAdmin ? 'Admin' : 'Not Admin'}
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>Email Status:</strong>{' '}
-            {user.isConfirmed ? 'Confirmed' : 'Not Confirmed'}
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>Cloudinary ID:</strong> {user.cloudinaryId}
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>IP Address:</strong> {user.ipAddress}
-            <div>
-              <Gauge
-                value={user.loginCounter}
-                startAngle={-110}
-                endAngle={110}
-                height={66}
-                sx={{
-                  [`& .${gaugeClasses.valueText}`]: {
-                    fontSize: 12,
-                    transform: 'translate(0px, 0px)',
-                  },
-                }}
-                text={({ value, valueMax }) => `${value} / ${valueMax}`}
-              />
-            </div>
-          </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Admin Status:</strong> {user.isAdmin ? 'Admin' : 'Not Admin'}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Email Status:</strong>{' '}
+          {user.isConfirmed ? 'Confirmed' : 'Not Confirmed'}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Cloudinary ID:</strong> {user.cloudinaryId}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>IP Address:</strong> {user.ipAddress}
+        </Typography>
 
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>Login Counter:</strong> {user.loginCounter}
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            <strong>Google Registered:</strong>{' '}
-            {user.registeredWithGoogle ? 'Yes' : 'No'}
-          </Typography>
-        </div>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Login Counter:</strong> {user.loginCounter}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Google Registered:</strong>{' '}
+          {user.registeredWithGoogle ? 'Yes' : 'No'}
+        </Typography>
       </Box>
-    </div>
+    </Grid>
   );
 };
 
