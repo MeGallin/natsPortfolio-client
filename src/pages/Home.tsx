@@ -4,14 +4,7 @@ import Name from '../components/Name';
 const Home = () => {
   return (
     <>
-      <Container
-        sx={{
-          padding: 4,
-          maxWidth: 'lg',
-        }}
-      >
-        <Name />
-      </Container>
+      <h1>Home page</h1>
     </>
   );
 };
