@@ -5,17 +5,13 @@ import { login } from '../../state/authSlice';
 import { validateEmail, validatePassword } from '../../utils/regEx';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-//MUI Imports
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  });
+  const [errors, setErrors] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,10 +27,7 @@ const Login: React.FC = () => {
     const passwordError = validatePassword(password);
 
     if (emailError || passwordError) {
-      setErrors({
-        email: emailError,
-        password: passwordError,
-      });
+      setErrors({ email: emailError, password: passwordError });
       return;
     }
 
@@ -46,9 +39,7 @@ const Login: React.FC = () => {
         `${import.meta.env.VITE_API_END_POINT}api/login`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         },
       );
@@ -58,23 +49,21 @@ const Login: React.FC = () => {
       if (response.ok && result.success) {
         dispatch(login({ user: result.name, token: result.token }));
         localStorage.setItem('authToken', result.token);
+        window.dispatchEvent(new Event('authChange')); // Notify global state
+
         setSuccessMessage(
           `Welcome, ${result.name}! You will be redirected in ${countdown} seconds.`,
         );
-
-        // Trigger countdown and redirect inside useEffect to prevent setState during render
         setIsSubmitting(false);
         setCountdown(5);
+        setEmail('');
+        setPassword('');
       } else {
-        setErrorMessage(
-          'Login failed. Please check your credentials and try again.',
-        );
+        setErrorMessage('Invalid credentials. Please try again.');
         setIsSubmitting(false);
       }
     } catch (error) {
-      setErrorMessage(
-        'An error occurred while trying to log in. Please try again later.',
-      );
+      setErrorMessage('An error occurred. Please try again later.');
       setIsSubmitting(false);
     }
   };
@@ -82,77 +71,75 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (successMessage) {
       const timer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown === 1) {
+        setCountdown((prev) => {
+          if (prev === 1) {
             clearInterval(timer);
             navigate('/dashboard');
           }
-          return prevCountdown - 1;
+          return prev - 1;
         });
       }, 1000);
 
-      return () => clearInterval(timer); // Cleanup the interval on component unmount
+      return () => clearInterval(timer);
     }
   }, [successMessage, navigate]);
 
   return (
-    <>
-      <Box
-        my={4}
-        display="flex"
-        alignItems="center"
-        flexDirection="column"
-        gap={4}
-        p={2}
-      >
-        <form onSubmit={handleSubmit} style={formStyle}>
-          <fieldset style={fieldsetStyle}>
-            <legend style={legendStyle}>Login</legend>
+    <Box
+      my={4}
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      gap={4}
+      p={2}
+    >
+      <form onSubmit={handleSubmit} style={formStyle}>
+        <fieldset style={fieldsetStyle}>
+          <legend style={legendStyle}>Login</legend>
 
-            {successMessage && (
-              <p style={successMessageStyle}>{successMessage}</p>
-            )}
-            {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
+          {successMessage && (
+            <p style={successMessageStyle}>{successMessage}</p>
+          )}
+          {errorMessage && <p style={errorMessageStyle}>{errorMessage}</p>}
 
-            <div style={fieldStyle}>
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={inputStyle}
-              />
-              {errors.email && <span style={errorStyle}>{errors.email}</span>}
-            </div>
-
-            <div style={fieldStyle}>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={inputStyle}
-              />
-              {errors.password && (
-                <span style={errorStyle}>{errors.password}</span>
-              )}
-            </div>
-
-            <Button
-              text="Login"
-              color={import.meta.env.VITE_PRIMARY_COLOR}
-              disabled={isSubmitting || !email || !password}
-              style={buttonStyle}
+          <div style={fieldStyle}>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={inputStyle}
             />
-          </fieldset>
-        </form>
-        <div>
-          <Link href="/forgot-password" color="inherit">
-            Forgotten your password?
-          </Link>
-        </div>
-      </Box>
-    </>
+            {errors.email && <span style={errorStyle}>{errors.email}</span>}
+          </div>
+
+          <div style={fieldStyle}>
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={inputStyle}
+            />
+            {errors.password && (
+              <span style={errorStyle}>{errors.password}</span>
+            )}
+          </div>
+
+          <Button
+            text="Login"
+            color={import.meta.env.VITE_PRIMARY_COLOR || '#000'}
+            disabled={isSubmitting || !email || !password}
+            style={buttonStyle}
+          />
+        </fieldset>
+      </form>
+      <div>
+        <Link href="/forgot-password" color="inherit">
+          Forgotten your password?
+        </Link>
+      </div>
+    </Box>
   );
 };
 

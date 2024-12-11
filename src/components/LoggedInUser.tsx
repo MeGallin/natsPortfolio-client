@@ -62,6 +62,7 @@ const LoggedInUser = () => {
         my={2}
         mx={4}
         display="flex"
+        flexWrap="wrap"
         alignItems="center"
         justifyContent="center"
         sx={{ height: '100%' }}
@@ -81,6 +82,7 @@ const LoggedInUser = () => {
         my={2}
         mx={4}
         display="flex"
+        flexWrap="wrap"
         alignItems="center"
         justifyContent="center"
         sx={{ height: '100%' }}
@@ -142,6 +144,7 @@ const LoggedInUser = () => {
         my={1}
         mx={4}
         display="flex"
+        flexWrap="wrap"
         alignItems="center"
         justifyContent="center"
         flexDirection="column"

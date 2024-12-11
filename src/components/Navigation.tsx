@@ -13,6 +13,7 @@ const Navigation = () => {
 
   useEffect(() => {
     const handleAuthChange = () => {
+      console.log('Auth state changed');
       setAuthenticated(isAuthenticated());
     };
 
@@ -24,20 +25,25 @@ const Navigation = () => {
   }, []);
 
   const getLinkClass = (path: string) => {
-    return location.pathname === path
-      ? 'link activeLink'
-      : 'link';
+    return location.pathname === path ? 'link activeLink' : 'link';
   };
 
   return (
     <AppBar position="static">
-      <Toolbar className="navbar">
+      <Toolbar className={`navbar ${authenticated ? 'logged-in' : ''}`}>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           <Button color="inherit">
             <Link to="/" className={getLinkClass('/')}>
               Home
             </Link>
           </Button>
+          {authenticated && (
+            <Button color="inherit">
+              <Link to="/dashboard" className={getLinkClass('/dashboard')}>
+                Dashboard
+              </Link>
+            </Button>
+          )}
         </Typography>
         <Button color="inherit">
           <Link to="/about" className={getLinkClass('/about')}>
@@ -54,13 +60,6 @@ const Navigation = () => {
             Contact
           </Link>
         </Button>
-        {authenticated && (
-          <Button color="inherit">
-            <Link to="/dashboard" className={getLinkClass('/dashboard')}>
-              DB
-            </Link>
-          </Button>
-        )}
       </Toolbar>
     </AppBar>
   );
