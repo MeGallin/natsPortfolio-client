@@ -130,6 +130,7 @@ const Login: React.FC = () => {
             text="Login"
             color={import.meta.env.VITE_PRIMARY_COLOR || '#000'}
             disabled={isSubmitting || !email || !password}
+            type="submit"
             style={buttonStyle}
           />
         </fieldset>
