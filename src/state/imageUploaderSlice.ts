@@ -110,7 +110,7 @@ const imageUploaderSlice = createSlice({
         state.successMessage = null;
         state.errorMessage = null;
       })
-      .addCase(uploadImage.fulfilled, (state, action) => {
+      .addCase(uploadImage.fulfilled, (state) => {
         state.status = 'success';
         state.successMessage = 'Image uploaded successfully!';
         state.fileInfo = null;

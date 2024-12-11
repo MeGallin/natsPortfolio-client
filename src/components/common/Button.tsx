@@ -6,7 +6,8 @@ interface ButtonProps {
   color?: string;
   onClick?: () => void;
   disabled?: boolean;
-  style?: Object;
+  style?: React.CSSProperties; // Use React.CSSProperties for better type safety
+  type?: 'button' | 'submit' | 'reset'; // Add the type property
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,8 @@ const Button: React.FC<ButtonProps> = ({
   color = 'blue',
   onClick,
   disabled = true,
+  style,
+  type = 'button', // Default to 'button'
 }) => {
   const buttonStyle = {
     backgroundColor: color,
@@ -24,12 +27,17 @@ const Button: React.FC<ButtonProps> = ({
     borderRadius: '5px',
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.5 : 1,
+    ...style, // Merge user-provided styles
   } as React.CSSProperties;
 
   return (
     <div>
-      {' '}
-      <button style={buttonStyle} onClick={onClick} disabled={disabled}>
+      <button
+        style={buttonStyle}
+        onClick={onClick}
+        disabled={disabled}
+        type={type}
+      >
         {text}
       </button>
     </div>
