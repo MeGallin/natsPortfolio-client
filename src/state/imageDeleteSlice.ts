@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState } from './store';
 
 // Define the structure of a gallery image item
 interface GalleryImage {
@@ -27,28 +28,38 @@ const initialState: GalleryState = {
   error: null,
 };
 
-// Async thunk to fetch gallery images
-export const fetchGalleryImages = createAsyncThunk(
-  'gallery/fetchImages',
-  async (_, { rejectWithValue }) => {
+// Async thunk to delete a gallery image
+// Async thunk to delete a gallery image
+export const deleteGalleryImage = createAsyncThunk(
+  'gallery/deleteImage',
+  async (id: string, { getState, rejectWithValue }) => {
     try {
+      // Get the token from the Redux auth state or localStorage
+      const state = getState() as RootState;
+      const token = state.auth.token || localStorage.getItem('authToken');
+
+      if (!token) {
+        throw new Error('No token available');
+      }
+
       const response = await fetch(
-        `${import.meta.env.VITE_API_END_POINT}api/gallery-images`,
+        `${import.meta.env.VITE_API_END_POINT}api/gallery-image-delete/${id}`,
         {
-          method: 'GET',
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
           },
         },
       );
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Failed to fetch gallery images');
+        throw new Error(data.message || 'Failed to delete gallery image');
       }
 
-      const data = await response.json();
-      return data.images; // Return the images array
+      await response.json();
+      return id; // Return the deleted image ID
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'An unknown error occurred';
@@ -70,17 +81,20 @@ const gallerySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchGalleryImages.pending, (state) => {
+      .addCase(deleteGalleryImage.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(
-        fetchGalleryImages.fulfilled,
-        (state, action: PayloadAction<GalleryImage[]>) => {
+        deleteGalleryImage.fulfilled,
+        (state, action: PayloadAction<string>) => {
           state.status = 'succeeded';
-          state.images = action.payload;
+          // Remove the deleted image from the state
+          state.images = state.images.filter(
+            (image) => image._id !== action.payload,
+          );
         },
       )
-      .addCase(fetchGalleryImages.rejected, (state, action) => {
+      .addCase(deleteGalleryImage.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string | null;
       });
