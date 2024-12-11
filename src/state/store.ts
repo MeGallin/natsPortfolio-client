@@ -6,6 +6,7 @@ import hitCounterReducer from './hitCounterSlice';
 import contactFormReducer from './contactFormSlice';
 import imageUploaderReducer from './imageUploaderSlice';
 import galleryReducer from './imagesGallerySlice';
+import imageDeleteReducer from './imageDeleteSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     contactForm: contactFormReducer,
     imageUploader: imageUploaderReducer,
     gallery: galleryReducer,
+    imageDelete: imageDeleteReducer,
   },
 });
 
