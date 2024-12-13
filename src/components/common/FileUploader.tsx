@@ -82,13 +82,24 @@ const FileUploader = () => {
 
   const handleFileUpload = async () => {
     if (!validateForm()) return;
-    const file = fileInputRef.current?.files?.[0]; // Retrieve file
 
-    if (file) {
-      dispatch(uploadImage({ file, title, description, by }));
-    } else {
+    const file = fileInputRef.current?.files?.[0]; // Retrieve file
+    console.log('Selected file:', file);
+
+    if (!file) {
       console.error('No file selected.');
+      return;
     }
+
+    // Check for file type (jpg and png)
+    const validFileTypes = ['image/jpeg', 'image/png']; // MIME types for jpg and png
+    if (!validFileTypes.includes(file.type)) {
+      console.error('Invalid file type. Only JPG and PNG files are allowed.');
+      alert('Invalid file type. Please upload a JPG or PNG file.');
+      return;
+    }
+
+    dispatch(uploadImage({ file, title, description, by }));
   };
 
   const handleButtonClick = () => {
