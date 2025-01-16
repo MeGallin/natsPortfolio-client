@@ -1,5 +1,12 @@
+import BackgroundText from '../components/common/BackGroundText';
+
 const Home = () => {
-  return <h1>Home page</h1>;
+  return (
+    <>
+      {' '}
+      <BackgroundText />
+    </>
+  );
 };
 
 export default Home;
