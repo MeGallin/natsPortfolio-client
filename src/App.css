@@ -1,6 +1,6 @@
 :root {
-  --header-height: 2.56em; /* Adjust the height as needed */
-  --footer-height: 4em; /* Adjust the height as needed */
+  --header-height: 48px; /* Adjust the height as needed */
+  --footer-height: 64px; /* Adjust the height as needed */
   --primary-color: #2e86c1;
   --secondary-color: #f39c12;
   --accent-color: #9b59b6;
@@ -52,30 +52,19 @@ html {
   display: flex;
   flex-direction: column;
   /* The 8px is the padding on the a tag in header */
-  height: calc(100vh - var(--header-height) - var(--footer-height) + 16px);
+  height: calc(100vh - var(--header-height) - var(--footer-height));
   /* The 8px is the padding on the a tag in header */
   overflow-y: auto;
 }
 
-/* header {
-  width: 100%;
-  height: var(--header-height);
-  background-color: var(--primary-color-dark);
-  color: white;
-  padding: 5px;
-  position: sticky;
-  top: 0;
-} */
+header {
+  min-height: var(--header-height);
+}
 
 footer {
-  margin-top: auto;
-  width: 100%;
   height: var(--footer-height);
-  background-color: var(--primary-color-dark);
+  background-color: #9c27b0;
   color: white;
-  padding-top: 0.4em;
-  text-align: center;
-  font-size: 0.75em;
 }
 
 /* Utility Classes */

@@ -14,7 +14,6 @@ function App() {
         <div id="main-container">
           <Outlet />
         </div>
-
         <Footer />
       </GlobalLayout>
     </>
