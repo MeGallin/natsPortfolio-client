@@ -17,6 +17,7 @@ const AboutMe: React.FC = () => {
       sx={{
         padding: 4,
         maxWidth: 'lg',
+        backgroundColor: (theme) => theme.palette.background.default,
       }}
     >
       {/* Hero Section */}
@@ -34,10 +35,11 @@ const AboutMe: React.FC = () => {
             height: 150,
             margin: '0 auto',
             mb: 2,
-            border: '5px solid #fff',
+            border: '5px solid',
+            borderColor: (theme) => theme.palette.primary.main,
           }}
         />
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h3" gutterBottom color="primary">
           Natalie Allin
           <AnimatedText />
         </Typography>
@@ -50,8 +52,14 @@ const AboutMe: React.FC = () => {
           experience in various design tools and a strong portfolio, I’m excited
           to bring my skills to [University Name].
         </Typography>
-        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-          <Link to="/portfolio">View Portfolio</Link>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2, textTransform: 'none' }}
+          component={Link}
+          to="/portfolio"
+        >
+          View Portfolio
         </Button>
       </Box>
 
@@ -62,18 +70,19 @@ const AboutMe: React.FC = () => {
             sx={{
               padding: 3,
               backgroundColor: (theme) => theme.palette.background.paper,
-              boxShadow: 3,
-              borderRadius: 2,
+              // boxShadow: 3,
+              // borderRadius: 2,
               height: '100%',
             }}
           >
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom color="primary">
               About Me
             </Typography>
             <Typography variant="body1">
-              [Detailed biography, achievements, and goals go here. Talk about
-              past projects, design philosophy, and what excites you about
-              graphic design.]
+              I specialize in creating innovative and visually compelling
+              designs. My work blends creativity and strategy to deliver
+              impactful solutions. From branding to digital design, I approach
+              every project with passion and attention to detail.
             </Typography>
           </Paper>
         </Grid>
@@ -82,12 +91,12 @@ const AboutMe: React.FC = () => {
             sx={{
               padding: 3,
               backgroundColor: (theme) => theme.palette.background.paper,
-              boxShadow: 3,
-              borderRadius: 2,
+              // boxShadow: 3,
+              // borderRadius: 2,
               height: '100%',
             }}
           >
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom color="primary">
               Skills & Tools
             </Typography>
             <Typography variant="body1">
@@ -99,7 +108,8 @@ const AboutMe: React.FC = () => {
               <br />
               - Sketch
               <br />
-              [Include any additional relevant tools or skills.]
+              - Procreate
+              <br />- Typography Design
             </Typography>
           </Paper>
         </Grid>
@@ -112,16 +122,24 @@ const AboutMe: React.FC = () => {
           mt: 4,
         }}
       >
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom color="primary">
           Contact
         </Typography>
         <Typography variant="body1">
           If you’d like to get in touch, feel free to reach out to me at:
           <br />
-          <a href="mailto:student@example.com">student@example.com</a>
+          <a href="mailto:student@example.com" style={{ color: '#3F51B5' }}>
+            student@example.com
+          </a>
         </Typography>
-        <Button variant="outlined" color="primary" sx={{ mt: 2 }}>
-          <Link to="/contact">Contact me</Link>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ mt: 2, textTransform: 'none' }}
+          component={Link}
+          to="/contact"
+        >
+          Contact me
         </Button>
       </Box>
     </Container>

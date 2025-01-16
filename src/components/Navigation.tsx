@@ -1,68 +1,42 @@
-import { Link, useLocation } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
-import { isAuthenticated } from '../auth';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import './Navigation.css';
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
 
-const Navigation = () => {
+const Navbar: React.FC<{ authenticated: boolean }> = ({ authenticated }) => {
   const location = useLocation();
-  const [authenticated, setAuthenticated] = useState(isAuthenticated());
 
-  useEffect(() => {
-    const handleAuthChange = () => {
-      console.log('Auth state changed');
-      setAuthenticated(isAuthenticated());
-    };
-
-    window.addEventListener('authChange', handleAuthChange);
-
-    return () => {
-      window.removeEventListener('authChange', handleAuthChange);
-    };
-  }, []);
-
-  const getLinkClass = (path: string) => {
-    return location.pathname === path ? 'link activeLink' : 'link';
+  const getLinkClass = (path: string): string => {
+    return location.pathname === path ? 'active-link' : '';
   };
 
+  const renderNavButton = (path: string, label: string) => (
+    <Button
+      color="inherit"
+      sx={{
+        fontSize: '1.15rem',
+        padding: '0 6px',
+        textTransform: 'upperCase',
+      }}
+    >
+      <Link to={path} className={getLinkClass(path)}>
+        {label}
+      </Link>
+    </Button>
+  );
+
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ boxShadow: 'none' }}>
       <Toolbar className={`navbar ${authenticated ? 'logged-in' : ''}`}>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-          <Button color="inherit">
-            <Link to="/" className={getLinkClass('/')}>
-              Home
-            </Link>
-          </Button>
-          {authenticated && (
-            <Button color="inherit">
-              <Link to="/dashboard" className={getLinkClass('/dashboard')}>
-                Dashboard
-              </Link>
-            </Button>
-          )}
+          {renderNavButton('/', 'Home')}
+          {authenticated && renderNavButton('/dashboard', 'Dashboard')}
         </Typography>
-        <Button color="inherit">
-          <Link to="/about" className={getLinkClass('/about')}>
-            About
-          </Link>
-        </Button>
-        <Button color="inherit">
-          <Link to="/portfolio" className={getLinkClass('/portfolio')}>
-            Portfolio
-          </Link>
-        </Button>
-        <Button color="inherit">
-          <Link to="/contact" className={getLinkClass('/contact')}>
-            Contact
-          </Link>
-        </Button>
+        {renderNavButton('/about', 'About')}
+        {renderNavButton('/portfolio', 'Portfolio')}
+        {renderNavButton('/contact', 'Contact')}
       </Toolbar>
     </AppBar>
   );
 };
 
-export default Navigation;
+export default Navbar;
