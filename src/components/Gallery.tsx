@@ -12,7 +12,6 @@ import {
   Box,
   Typography,
   CircularProgress,
-  Grid,
   Container,
 } from '@mui/material';
 import { AppDispatch, RootState } from '../state/store';
