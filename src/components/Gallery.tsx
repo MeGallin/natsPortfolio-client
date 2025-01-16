@@ -12,6 +12,8 @@ import {
   Box,
   Typography,
   CircularProgress,
+  Grid,
+  Container,
 } from '@mui/material';
 import { AppDispatch, RootState } from '../state/store';
 import { fetchGalleryImages } from '../state/imagesGallerySlice';
@@ -111,7 +113,7 @@ export default function Gallery() {
   }
 
   return (
-    <>
+    <Container>
       <ImageList
         sx={{
           width: '100%',
@@ -214,7 +216,7 @@ export default function Gallery() {
           )}
         </Box>
       </Modal>
-    </>
+    </Container>
   );
 }
 
