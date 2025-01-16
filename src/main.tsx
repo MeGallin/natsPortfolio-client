@@ -31,11 +31,6 @@ const rootRoute = new RootRoute({
   component: App,
 });
 
-// Define a helper function for active link styling
-const getLinkClass = (path: string): string => {
-  return window.location.pathname === path ? 'active-link' : '';
-};
-
 // Define the individual routes with lazy-loaded components
 const routes = [
   new Route({
