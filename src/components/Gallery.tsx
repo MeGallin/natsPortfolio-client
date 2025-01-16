@@ -112,7 +112,12 @@ export default function Gallery() {
   }
 
   return (
-    <Container>
+    <Container
+      sx={{
+        padding: 4,
+        maxWidth: 'lg',
+      }}
+    >
       <ImageList
         sx={{
           width: '100%',

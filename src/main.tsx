@@ -8,7 +8,10 @@ import {
   Route,
 } from '@tanstack/react-router';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import { store } from './state/store';
+import { theme } from './theme/theme'; // Import your global theme
 import App from './App';
 import './index.css';
 import { isAuthenticated } from './auth';
@@ -28,76 +31,72 @@ const rootRoute = new RootRoute({
   component: App,
 });
 
+// Define a helper function for active link styling
+const getLinkClass = (path: string): string => {
+  return window.location.pathname === path ? 'active-link' : '';
+};
+
 // Define the individual routes with lazy-loaded components
-const homeRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: Home,
-});
-
-const aboutRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'about',
-  component: About,
-});
-
-const contactRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'contact',
-  component: Contact,
-});
-
-const portfolioRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'portfolio',
-  component: Portfolio,
-});
-
-const adminRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'admin',
-  component: Admin,
-});
-
-const forgotPasswordRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'forgot-password',
-  component: ForgotPassword,
-});
-
-// Protected Dashboard Route
-const dashboardRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: 'dashboard',
-  component: Dashboard,
-  beforeLoad: () => {
-    const authenticated = isAuthenticated();
-    if (!authenticated) {
-      return { redirect: '/admin' };
-    }
-  },
-});
+const routes = [
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: '/',
+    component: Home,
+  }),
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'about',
+    component: About,
+  }),
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'contact',
+    component: Contact,
+  }),
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'portfolio',
+    component: Portfolio,
+  }),
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'admin',
+    component: Admin,
+  }),
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'forgot-password',
+    component: ForgotPassword,
+  }),
+  // Protected Dashboard Route
+  new Route({
+    getParentRoute: () => rootRoute,
+    path: 'dashboard',
+    component: Dashboard,
+    beforeLoad: () => {
+      const authenticated = isAuthenticated();
+      if (!authenticated) {
+        return { redirect: '/admin' };
+      }
+    },
+  }),
+];
 
 // Create the router instance
 const router = new Router({
-  routeTree: rootRoute.addChildren([
-    homeRoute,
-    aboutRoute,
-    contactRoute,
-    portfolioRoute,
-    adminRoute,
-    forgotPasswordRoute,
-    dashboardRoute,
-  ]),
+  routeTree: rootRoute.addChildren(routes),
 });
 
-// Render the application with the Redux Provider and RouterProvider
+// Render the application
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
-    <BrowserRouter>
-      <Suspense fallback={<Spinner />}>
-        <RouterProvider router={router} />
-      </Suspense>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Suspense fallback={<Spinner />}>
+          <RouterProvider router={router}></RouterProvider>
+        </Suspense>
+      </BrowserRouter>
+    </ThemeProvider>
   </Provider>,
 );

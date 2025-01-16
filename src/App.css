@@ -84,3 +84,8 @@ footer {
 .cursor-pointer:hover {
   border: 1px solid var(--neutral-color);
 }
+.active-link {
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ff7043; /* Match your global palette */
+}
