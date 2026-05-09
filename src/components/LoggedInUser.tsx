@@ -113,17 +113,13 @@ const LoggedInUser = () => {
             <div className="avatar-text-button-wrapper">
               <Button
                 text="Save"
-                color={getComputedStyle(document.documentElement)
-                  .getPropertyValue('--primary-color')
-                  .trim()}
+                color="var(--primary-color)"
                 disabled={!editName || !editEmail}
                 onClick={handleSave}
               />
               <Button
                 text="Discard"
-                color={getComputedStyle(document.documentElement)
-                  .getPropertyValue('--secondary-color')
-                  .trim()}
+                color="var(--secondary-color)"
                 onClick={handleCancel}
               />
             </div>

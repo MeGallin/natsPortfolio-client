@@ -99,9 +99,7 @@ const ContactForm: React.FC = () => {
 
           <Button
             text="Submit"
-            color={getComputedStyle(document.documentElement)
-              .getPropertyValue('--primary-color')
-              .trim()}
+            color="var(--primary-color)"
             type="submit"
             disabled={isSubmitting}
             style={buttonStyle}

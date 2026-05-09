@@ -22,8 +22,8 @@ export const validateMessage = (message: string): string => {
 };
 
 export const validatePassword = (password: string): string => {
-  if (password.length < 6) {
-    return 'Password must be at least 6 characters long.';
+  if (password.length < 8) {
+    return 'Password must be at least 8 characters long.';
   }
   return '';
 };
@@ -50,7 +50,7 @@ export const validateDescription = (description: string): string => {
   return '';
 };
 
-export const  validateBy = (author: string): string => {
+export const validateBy = (author: string): string => {
   const trimmedAuthor = author.trim();
   if (!trimmedAuthor) {
     return 'Author name is required.';

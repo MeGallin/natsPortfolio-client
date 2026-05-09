@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from './store';
+import { getApiErrorMessage } from '../utils/api';
 
 // Define the structure of a contact item
 interface Contact {
@@ -50,12 +51,13 @@ export const fetchContactsInfo = createAsyncThunk(
         },
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch contacts information');
+        throw new Error(
+          await getApiErrorMessage(response, 'Failed to fetch contacts information'),
+        );
       }
 
+      const data = await response.json();
       return data.contacts; // Return the contacts array
     } catch (error: unknown) {
       const errorMessage =

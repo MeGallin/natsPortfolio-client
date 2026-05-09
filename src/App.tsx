@@ -1,4 +1,4 @@
-import { Outlet } from '@tanstack/react-router';
+import { Outlet } from 'react-router-dom';
 import './App.css';
 import GlobalLayout from './components/common/GlobalLayout';
 import Header from './components/common/Header';

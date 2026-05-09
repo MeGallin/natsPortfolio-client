@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from './store';
+import { getApiErrorMessage } from '../utils/api';
 
 // Thunk to fetch user details from the API
 export const fetchUserDetails = createAsyncThunk(
@@ -28,7 +29,7 @@ export const fetchUserDetails = createAsyncThunk(
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch user details');
+        throw new Error(data.error || data.message || 'Failed to fetch user details');
       }
 
       return data.userDetails; // Return the userDetails object
@@ -69,13 +70,13 @@ export const updateUserDetails = createAsyncThunk(
         },
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to update user details');
+        throw new Error(
+          await getApiErrorMessage(response, 'Failed to update user details'),
+        );
       }
 
-      return data.userDetails; // Return the updated userDetails object
+      return details;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'An unknown error occurred';
@@ -179,7 +180,6 @@ const userSlice = createSlice({
           // Update the state with the updated user details
           state.name = action.payload.name;
           state.email = action.payload.email;
-         
         } else {
           state.error = 'Failed to update user details';
         }

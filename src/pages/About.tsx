@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AnimatedText from '../components/AnimatedText';
+import profileImage from '../assets/images/sample.jpg';
 
 const AboutMe: React.FC = () => {
   return (
@@ -28,8 +29,8 @@ const AboutMe: React.FC = () => {
         }}
       >
         <Avatar
-          src="/path-to-image.jpg" // Replace with the student's profile image
-          alt="Student Name" // Replace with the student's name
+          src={profileImage}
+          alt="Natalie Allin"
           sx={{
             width: 150,
             height: 150,
@@ -50,7 +51,7 @@ const AboutMe: React.FC = () => {
           Hi, I’m Natalie. I’m a passionate graphic design student with a keen
           eye for detail and a love for creating visually stunning designs. With
           experience in various design tools and a strong portfolio, I’m excited
-          to bring my skills to [University Name].
+          to keep developing my creative practice.
         </Typography>
         <Button
           variant="contained"
@@ -128,8 +129,8 @@ const AboutMe: React.FC = () => {
         <Typography variant="body1">
           If you’d like to get in touch, feel free to reach out to me at:
           <br />
-          <a href="mailto:student@example.com" style={{ color: '#3F51B5' }}>
-            student@example.com
+          <a href="mailto:natalie@example.com" style={{ color: '#3F51B5' }}>
+            natalie@example.com
           </a>
         </Typography>
         <Button

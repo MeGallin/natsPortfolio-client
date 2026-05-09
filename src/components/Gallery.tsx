@@ -19,6 +19,7 @@ import { fetchGalleryImages } from '../state/imagesGallerySlice';
 import { isAuthenticated } from '../auth';
 import Button from './common/Button';
 import { deleteGalleryImage } from '../state/imageDeleteSlice';
+import { fetchUserDetails } from '../state/userSlice';
 
 function srcset(image: string, size: number, rows = 1, cols = 1) {
   return {
@@ -46,21 +47,25 @@ export default function Gallery() {
   const { images, status, error } = useSelector(
     (state: RootState) => state.gallery,
   );
+  const user = useSelector((state: RootState) => state.user);
 
   // Modal state
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ModalImageData | null>(
     null,
   );
-  const [authenticated, setAuthenticated] = useState(isAuthenticated());
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Fetch images when component mounts
   useEffect(() => {
     dispatch(fetchGalleryImages());
-    setAuthenticated(isAuthenticated());
+    if (isAuthenticated()) {
+      dispatch(fetchUserDetails());
+    }
   }, [dispatch]);
 
   const handleOpen = (image: ModalImageData) => {
+    setDeleteError(null);
     setSelectedImage(image);
     setOpen(true);
   };
@@ -73,13 +78,16 @@ export default function Gallery() {
   const handleImageDelete = async () => {
     if (!selectedImage || !selectedImage._id) return;
 
+    const confirmed = window.confirm('Are you sure you want to delete this image?');
+    if (!confirmed) return;
+
     const result = await dispatch(deleteGalleryImage(selectedImage._id));
 
     if (deleteGalleryImage.fulfilled.match(result)) {
       handleClose();
       dispatch(fetchGalleryImages());
     } else {
-      console.error('Failed to delete the image:', result.payload);
+      setDeleteError(String(result.payload || 'Failed to delete the image.'));
     }
   };
 
@@ -182,7 +190,12 @@ export default function Gallery() {
         >
           {selectedImage && (
             <>
-              {authenticated && (
+              {deleteError && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                  {deleteError}
+                </Typography>
+              )}
+              {user.isAdmin && (
                 <Button
                   text="Delete this Image"
                   color={'red'}

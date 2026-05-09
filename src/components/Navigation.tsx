@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 const Navbar: React.FC<{ authenticated: boolean }> = ({ authenticated }) => {
   const location = useLocation();
@@ -12,15 +12,16 @@ const Navbar: React.FC<{ authenticated: boolean }> = ({ authenticated }) => {
   const renderNavButton = (path: string, label: string) => (
     <Button
       color="inherit"
+      component={RouterLink}
+      to={path}
+      className={getLinkClass(path)}
       sx={{
         fontSize: '1.15rem',
         padding: '0 6px',
-        textTransform: 'upperCase',
+        textTransform: 'uppercase',
       }}
     >
-      <Link to={path} className={getLinkClass(path)}>
-        {label}
-      </Link>
+      {label}
     </Button>
   );
 

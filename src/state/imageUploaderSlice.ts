@@ -1,4 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { getApiErrorMessage } from '../utils/api';
+import { RootState } from './store';
 
 interface ImageUploaderState {
   status: 'idle' | 'uploading' | 'success' | 'error';
@@ -45,9 +47,16 @@ export const uploadImage = createAsyncThunk(
       description,
       by,
     }: { file: File; title: string; description: string; by: string },
-    { rejectWithValue },
+    { getState, rejectWithValue },
   ) => {
     try {
+      const state = getState() as RootState;
+      const token = state.auth.token || localStorage.getItem('authToken');
+
+      if (!token) {
+        return rejectWithValue('You must be logged in as an admin to upload images.');
+      }
+
       const formData = new FormData();
       formData.append('image', file); // Key must match backend
       formData.append('title', title);
@@ -58,19 +67,25 @@ export const uploadImage = createAsyncThunk(
         `${import.meta.env.VITE_API_END_POINT}api/upload`,
         {
           method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           body: formData,
         },
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to upload image.');
+        return rejectWithValue(
+          await getApiErrorMessage(response, 'Failed to upload image.'),
+        );
       }
 
       const data = await response.json();
       return data.image;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'An unexpected error occurred.');
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'An unexpected error occurred.';
+      return rejectWithValue(message);
     }
   },
 );
@@ -79,26 +94,29 @@ const imageUploaderSlice = createSlice({
   name: 'imageUploader',
   initialState,
   reducers: {
-    setFileInfo: (state, action) => {
+    setFileInfo: (
+      state,
+      action: PayloadAction<{ name: string; size: number; type: string }>,
+    ) => {
       state.fileInfo = {
         name: action.payload.name,
         size: action.payload.size,
         type: action.payload.type,
       };
     },
-    setPreview: (state, action) => {
+    setPreview: (state, action: PayloadAction<string>) => {
       state.preview = action.payload;
     },
-    setTitle: (state, action) => {
+    setTitle: (state, action: PayloadAction<string>) => {
       state.title = action.payload;
     },
-    setDescription: (state, action) => {
+    setDescription: (state, action: PayloadAction<string>) => {
       state.description = action.payload;
     },
-    setBy: (state, action) => {
+    setBy: (state, action: PayloadAction<string>) => {
       state.by = action.payload;
     },
-    setErrors: (state, action) => {
+    setErrors: (state, action: PayloadAction<ImageUploaderState['errors']>) => {
       state.errors = action.payload;
     },
     resetForm: () => initialState,

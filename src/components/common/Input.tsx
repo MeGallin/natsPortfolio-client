@@ -12,7 +12,7 @@ interface InputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  style?:Object
+  style?: React.CSSProperties;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -47,7 +47,7 @@ const Input: React.FC<InputProps> = ({
         fontSize: '16px',
         margin: '5px 0',
         width: '100%',
-        ...style
+        ...style,
       }}
     />
   );

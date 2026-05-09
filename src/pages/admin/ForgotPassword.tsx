@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { validateEmail } from '../../utils/regEx';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -56,7 +57,7 @@ const ForgotPassword: React.FC = () => {
       } else {
         throw new Error('Failed to send message.');
       }
-    } catch (error) {
+    } catch {
       setErrorMessage(
         'There was an error submitting the form. Please try again later.',
       );
@@ -103,16 +104,14 @@ const ForgotPassword: React.FC = () => {
 
             <Button
               text="Submit"
-              color={getComputedStyle(document.documentElement)
-                .getPropertyValue('--primary-color')
-                .trim()}
+              color="var(--primary-color)"
               disabled={isSubmitting || !email}
               style={buttonStyle} // Applied full-width style
             />
           </fieldset>
         </form>
         <div>
-          <Link href="/admin" color="inherit">
+          <Link component={RouterLink} to="/admin" color="inherit">
             Go back to login page?
           </Link>
         </div>

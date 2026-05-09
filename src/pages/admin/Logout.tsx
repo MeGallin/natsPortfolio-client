@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../state/authSlice';
 import Button from '../../components/common/Button';
+import { clearAuthToken } from '../../utils/api';
 
 const Logout: React.FC = () => {
   const dispatch = useDispatch();
@@ -10,16 +11,13 @@ const Logout: React.FC = () => {
 
   const handleLogout = () => {
     // Clear the token from localStorage
-    localStorage.removeItem('authToken');
+    clearAuthToken();
 
     // Dispatch the logout action to clear the Redux state
     dispatch(logout());
 
-    // Trigger custom event to notify of authentication change
-    window.dispatchEvent(new Event('authChange'));
-
     // Redirect the user to the login page
-    navigate('/login');
+    navigate('/admin');
   };
 
   return (

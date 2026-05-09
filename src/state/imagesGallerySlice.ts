@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiErrorMessage } from '../utils/api';
 
 // Define the structure of a gallery image item
 interface GalleryImage {
@@ -43,8 +44,9 @@ export const fetchGalleryImages = createAsyncThunk(
       );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to fetch gallery images');
+        throw new Error(
+          await getApiErrorMessage(response, 'Failed to fetch gallery images'),
+        );
       }
 
       const data = await response.json();

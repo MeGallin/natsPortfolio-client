@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getApiErrorMessage } from '../utils/api';
 
 interface ContactFormState {
   isSubmitting: boolean;
@@ -24,7 +25,7 @@ export const submitContactForm = createAsyncThunk(
     });
 
     if (!response.ok) {
-      throw new Error('Failed to send message.');
+      throw new Error(await getApiErrorMessage(response, 'Failed to send message.'));
     }
 
     const data = await response.json();

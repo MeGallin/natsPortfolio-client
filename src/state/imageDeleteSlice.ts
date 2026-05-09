@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from './store';
+import { getApiErrorMessage } from '../utils/api';
 
 // Define the structure of a gallery image item
 interface GalleryImage {
@@ -54,8 +55,9 @@ export const deleteGalleryImage = createAsyncThunk(
       );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to delete gallery image');
+        throw new Error(
+          await getApiErrorMessage(response, 'Failed to delete gallery image'),
+        );
       }
 
       await response.json();

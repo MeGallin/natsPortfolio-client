@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { login } from '../../state/authSlice';
 import { validateEmail, validatePassword } from '../../utils/regEx';
 import Input from '../../components/common/Input';
@@ -59,10 +59,12 @@ const Login: React.FC = () => {
         setEmail('');
         setPassword('');
       } else {
-        setErrorMessage('Invalid credentials. Please try again.');
+        setErrorMessage(
+          result.error || result.message || 'Invalid credentials. Please try again.',
+        );
         setIsSubmitting(false);
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred. Please try again later.');
       setIsSubmitting(false);
     }
@@ -136,7 +138,7 @@ const Login: React.FC = () => {
         </fieldset>
       </form>
       <div>
-        <Link href="/forgot-password" color="inherit">
+        <Link component={RouterLink} to="/forgot-password" color="inherit">
           Forgotten your password?
         </Link>
       </div>

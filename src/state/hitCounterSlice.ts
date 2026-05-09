@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchHitCount = createAsyncThunk('hitCounter/fetchHitCount', async () => {
   const response = await fetch(`${import.meta.env.VITE_API_END_POINT}api/page-hits`);
   const data = await response.json();
-  return data.hits.length;
+  return data.total ?? data.hits?.length ?? 0;
 });
 
 const hitCounterSlice = createSlice({

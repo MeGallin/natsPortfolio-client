@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useEffect } from 'react';
+import { ChangeEvent, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Box, Typography, IconButton, TextField } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -35,6 +35,7 @@ const FileUploader = () => {
     errorMessage,
   } = useSelector((state: RootState) => state.imageUploader);
 
+  const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -65,9 +66,10 @@ const FileUploader = () => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (!selectedFile.type.startsWith('image/')) {
-        alert('Please select an image file');
+        setFileError('Please select an image file.');
         return;
       }
+      setFileError(null);
       dispatch(
         setFileInfo({
           name: selectedFile.name,
@@ -84,20 +86,20 @@ const FileUploader = () => {
     if (!validateForm()) return;
 
     const file = fileInputRef.current?.files?.[0]; // Retrieve file
-    console.log('Selected file:', file);
 
     if (!file) {
-      console.error('No file selected.');
+      setFileError('No file selected.');
       return;
     }
 
     // Check for file type (jpg and png)
     const validFileTypes = ['image/jpeg', 'image/png']; // MIME types for jpg and png
     if (!validFileTypes.includes(file.type)) {
-      console.error('Invalid file type. Only JPG and PNG files are allowed.');
-      alert('Invalid file type. Please upload a JPG or PNG file.');
+      setFileError('Invalid file type. Please upload a JPG or PNG file.');
       return;
     }
+
+    setFileError(null);
 
     dispatch(uploadImage({ file, title, description, by }));
   };
@@ -113,6 +115,7 @@ const FileUploader = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    setFileError(null);
     dispatch(resetForm());
   };
 
@@ -147,6 +150,12 @@ const FileUploader = () => {
             style={{ display: 'none' }}
             accept="image/*"
           />
+
+          {fileError && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {fileError}
+            </Typography>
+          )}
 
           {!fileInfo && (
             <Button
